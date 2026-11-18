@@ -56,7 +56,7 @@ const MASCOT_SVG = (mood: Mood): string => {
     laptop: `.tap{animation:tap .3s steps(1,end) infinite}
 .k1{animation:code 1.6s steps(1,end) infinite}.k2{animation:code 1.6s steps(1,end) infinite .5s}.k3{animation:code 1.6s steps(1,end) infinite 1s}
 .cur{animation:cur .6s steps(1,end) infinite}
-@keyframes tap{0%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@keyframes tap{0%{transform:translateY(-4px)}50%{transform:translateY(0)}}
 @keyframes code{0%{transform:scaleX(.2)}25%{transform:scaleX(.5)}50%{transform:scaleX(.8)}75%{transform:scaleX(1)}100%{transform:scaleX(.3)}}
 @keyframes cur{0%{opacity:1}50%{opacity:0}}`,
     walk: `.w{animation:walk 5s steps(1,end) infinite}.d1,.d2,.d3{animation:dot 1.2s steps(1,end) infinite}.d2{animation-delay:.4s}.d3{animation-delay:.8s}
@@ -75,14 +75,14 @@ const MASCOT_SVG = (mood: Mood): string => {
 <rect class="k1" x="8" y="9" width="40" height="3" fill="#2fb36b" style="transform-box:fill-box;transform-origin:left"/>
 <rect class="k2" x="8" y="16" width="32" height="3" fill="#5aa9ff" style="transform-box:fill-box;transform-origin:left"/>
 <rect class="k3" x="8" y="23" width="44" height="3" fill="#f5a524" style="transform-box:fill-box;transform-origin:left"/>
-<rect class="cur" x="52" y="28" width="4" height="5" fill="#fbf3ec"/><rect x="-6" y="40" width="76" height="6" fill="#9aa3b2"/></g>`,
+<rect class="cur" x="52" y="28" width="4" height="5" fill="#fbf3ec"/><rect x="-6" y="40" width="76" height="6" fill="#9aa3b2"/></g><rect x="102" y="52" width="24" height="9" fill="#d97757"/><rect class="tap" x="122" y="52" width="12" height="13" fill="#d97757"/>`,
     walk: '',
     hop: `<rect class="sp" x="14" y="10" width="5" height="5" fill="#f5a524"/><rect class="sp" x="168" y="16" width="5" height="5" fill="#5aa9ff"/><rect class="sp" x="150" y="4" width="4" height="4" fill="#2fb36b"/><rect class="sp" x="30" y="2" width="4" height="4" fill="#d63a3a"/>`,
     read: `<g transform="translate(60,50)"><rect x="0" y="0" width="32" height="22" fill="#fbf3ec"/><rect x="15" y="0" width="2" height="22" fill="#9aa3b2"/><rect class="pg" x="17" y="0" width="15" height="22" fill="#e9dfd3" style="transform-box:fill-box;transform-origin:left"/><rect x="4" y="5" width="9" height="2" fill="#9aa3b2"/><rect x="4" y="10" width="9" height="2" fill="#9aa3b2"/><rect x="4" y="15" width="9" height="2" fill="#9aa3b2"/></g>`,
   }
   const rightArm =
     mood === 'laptop'
-      ? `<rect class="tap" x="96" y="38" width="34" height="12" fill="${C}"/>`
+      ? ''
       : `<rect class="a2" x="96" y="28" width="16" height="14" fill="${C}"/>`
   const shift = mood === 'laptop' ? 6 : 33
   const topMarks = mood === 'walk' ? dots : ''
