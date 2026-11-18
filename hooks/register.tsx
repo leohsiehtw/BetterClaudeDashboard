@@ -33,6 +33,32 @@ function mascot(now: number, busy: boolean): string[] {
   return [' ▗▟█████▙▖', `▐█ ${eyes} █▌`, ` ▝▜█████▛▘`, `   ${legs}`]
 }
 
+const MASCOT_SVG = (busy: boolean): string => {
+  const bob = busy ? '0.5s' : '2.4s'
+  const leg = busy ? '0.3s' : '1.6s'
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 84" width="120" height="84"><style>
+.b{animation:bob ${bob} ease-in-out infinite;transform-origin:60px 80px}
+.l1{animation:leg ${leg} ease-in-out infinite;transform-origin:44px 62px}
+.l2{animation:leg ${leg} ease-in-out infinite reverse;transform-origin:76px 62px}
+.e{animation:blink 3.6s infinite;transform-origin:center;transform-box:fill-box}
+.a1{animation:wave ${bob} ease-in-out infinite;transform-origin:20px 44px}
+.a2{animation:wave ${bob} ease-in-out infinite reverse;transform-origin:100px 44px}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-${busy ? 5 : 3}px)}}
+@keyframes leg{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(0.1)}}
+@keyframes wave{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
+</style><g class="b">
+<rect class="a1" x="6" y="38" width="16" height="10" rx="5" fill="#c8582f"/>
+<rect class="a2" x="98" y="38" width="16" height="10" rx="5" fill="#c8582f"/>
+<rect class="l1" x="38" y="58" width="9" height="16" rx="4" fill="#c8582f"/>
+<rect class="l2" x="73" y="58" width="9" height="16" rx="4" fill="#c8582f"/>
+<rect x="18" y="14" width="84" height="52" rx="14" fill="#d97757"/>
+<ellipse class="e" cx="44" cy="38" rx="5" ry="7" fill="#2b1810"/>
+<ellipse class="e" cx="76" cy="38" rx="5" ry="7" fill="#2b1810"/>
+</g></svg>`
+}
+
 function spin(now: number): string {
   return SPIN[Math.floor(now / 1000) % SPIN.length] ?? '⠋'
 }
@@ -282,15 +308,26 @@ export const register: Register = on => {
       .map(([name, n]) => `${shortTool(name)} ${n}`)
       .join(' · ')
     const shownLog = log.slice(-LOG_SHOWN)
+    const isBusy = turnRunning || live.length > 0
+    const art =
+      e.surface === 'desktop' ? (
+        (() => {
+          const { Svg } = $.ui.resolve(e)
+
+          return <Svg source={MASCOT_SVG(isBusy)} alt="Mascot" isInteractive />
+        })()
+      ) : (
+        mascot(now, isBusy).map((line, i) => (
+          <Text key={String(i)} color={ORANGE}>
+            {line}
+          </Text>
+        ))
+      )
 
     return (
       <Box flexDirection="column" gap="sm">
         <Box flexDirection="column" alignItems="center">
-          {mascot(now, turnRunning || live.length > 0).map((line, i) => (
-            <Text key={String(i)} color={ORANGE}>
-              {line}
-            </Text>
-          ))}
+          {art}
         </Box>
         <Box flexDirection="column" borderStyle="round" borderColor={ORANGE} paddingX={1}>
           <Box justifyContent="space-between">
