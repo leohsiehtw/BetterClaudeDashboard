@@ -93,7 +93,7 @@ ${rightArm}
 <rect x="28" y="8" width="48" height="44" fill="${C}"/>
 <g class="${head}"><rect class="e" x="40" y="16" width="6" height="9" fill="#1a1a1a"/><rect class="e" x="58" y="16" width="6" height="9" fill="#1a1a1a"/></g>
 <rect class="p1" x="30" y="52" width="6" height="14" fill="${C}"/><rect class="p2" x="42" y="52" width="6" height="14" fill="${C}"/>
-<rect class="p2" x="58" y="52" width="6" height="14" fill="${C}"/><rect class="p1" x="70" y="52" width="6" height="14" fill="${C}"/><rect class="p2" x="80" y="48" width="8" height="16" fill="${C}"/>
+<rect class="p2" x="58" y="52" width="6" height="14" fill="${C}"/><rect class="p1" x="70" y="52" width="6" height="14" fill="${C}"/>
 </g></g></g>${extras[mood]}</svg>`
 }
 

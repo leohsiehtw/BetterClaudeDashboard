@@ -4,9 +4,13 @@
 
 [English](README.md) · 繁體中文
 
-<p align="center"><img src="docs/screenshot.png" alt="Idle" width="200"> <img src="docs/mood-hop.png" alt="Hopping while working" width="200"> <img src="docs/mood-laptop.png" alt="Typing on a laptop while working" width="200"></p>
+<p align="center"><img src="docs/screenshot.png" alt="ClaudeCode_Dashboard pane" width="260"></p>
 
 Claude Code 桌面版的資源監視器。放在側邊面板，不離開 app 就能即時看用量、context、權限和 subagent。只觀察事件：不呼叫模型、不耗 token，也不阻擋或改寫工具呼叫。
+
+### 吉祥物
+
+<table><tr><td align="center"><img src="docs/moods/idle.gif" width="190"><br><sub>閒置：睡覺、東張西望、打招呼</sub></td><td align="center"><img src="docs/moods/laptop.gif" width="190"><br><sub>用筆電打字</sub></td><td align="center"><img src="docs/moods/walk.gif" width="190"><br><sub>邊走邊想</sub></td><td align="center"><img src="docs/moods/hop.gif" width="190"><br><sub>跳躍</sub></td></tr><tr><td align="center"><img src="docs/moods/read.gif" width="190"><br><sub>看書</sub></td><td align="center"><img src="docs/moods/search.gif" width="190"><br><sub>搜尋</sub></td><td align="center"><img src="docs/moods/bulb.gif" width="190"><br><sub>靈光一閃</sub></td><td align="center"><img src="docs/moods/coffee.gif" width="190"><br><sub>喝咖啡休息</sub></td></tr></table>
 
 ### 功能
 

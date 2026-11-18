@@ -4,9 +4,13 @@
 
 English · [繁體中文](README.zh-TW.md)
 
-<p align="center"><img src="docs/screenshot.png" alt="Idle" width="200"> <img src="docs/mood-hop.png" alt="Hopping while working" width="200"> <img src="docs/mood-laptop.png" alt="Typing on a laptop while working" width="200"></p>
+<p align="center"><img src="docs/screenshot.png" alt="ClaudeCode_Dashboard pane" width="260"></p>
 
 A resource monitor for Claude Code on desktop. It lives in a side pane and shows live usage, context, permissions and subagents without leaving the app. It only observes events: no model calls, zero tokens, and it never blocks or rewrites tool calls.
+
+### Mascot
+
+<table><tr><td align="center"><img src="docs/moods/idle.gif" width="190"><br><sub>Idle: sleeps, looks around, waves</sub></td><td align="center"><img src="docs/moods/laptop.gif" width="190"><br><sub>Typing on a laptop</sub></td><td align="center"><img src="docs/moods/walk.gif" width="190"><br><sub>Pacing while thinking</sub></td><td align="center"><img src="docs/moods/hop.gif" width="190"><br><sub>Hopping</sub></td></tr><tr><td align="center"><img src="docs/moods/read.gif" width="190"><br><sub>Reading</sub></td><td align="center"><img src="docs/moods/search.gif" width="190"><br><sub>Searching</sub></td><td align="center"><img src="docs/moods/bulb.gif" width="190"><br><sub>Idea</sub></td><td align="center"><img src="docs/moods/coffee.gif" width="190"><br><sub>Coffee break</sub></td></tr></table>
 
 ### Features
 
