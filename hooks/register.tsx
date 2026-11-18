@@ -730,6 +730,8 @@ function shortModel(model: string): string {
 
 // ---- polling ----
 
+let wasLive = false
+
 async function tick($: EngineInterface): Promise<void> {
   if (isTicking) return
   isTicking = true
@@ -744,9 +746,10 @@ async function tick($: EngineInterface): Promise<void> {
     const isLive =
       rows.some(row => row.endedAt === undefined) ||
       (act.turn.startedAt !== undefined && act.turn.endedAt === undefined)
-    if (isLive || Math.floor(shown / 60_000) !== Math.floor(now / 60_000)) {
+    if (isLive || wasLive || Math.floor(shown / 60_000) !== Math.floor(now / 60_000)) {
       await update($, clockNow, () => now)
     }
+    wasLive = isLive
   } catch (error) {
     logError($, error)
   } finally {
