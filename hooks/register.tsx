@@ -35,27 +35,29 @@ function mascot(now: number, busy: boolean): string[] {
 
 const MASCOT_SVG = (busy: boolean): string => {
   const bob = busy ? '0.5s' : '2.4s'
-  const leg = busy ? '0.3s' : '1.6s'
+  const step = busy ? '0.4s' : '1.6s'
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 84" width="120" height="84"><style>
-.b{animation:bob ${bob} ease-in-out infinite;transform-origin:60px 80px}
-.l1{animation:leg ${leg} ease-in-out infinite;transform-origin:44px 62px}
-.l2{animation:leg ${leg} ease-in-out infinite reverse;transform-origin:76px 62px}
-.e{animation:blink 3.6s infinite;transform-origin:center;transform-box:fill-box}
-.a1{animation:wave ${bob} ease-in-out infinite;transform-origin:20px 44px}
-.a2{animation:wave ${bob} ease-in-out infinite reverse;transform-origin:100px 44px}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-${busy ? 5 : 3}px)}}
-@keyframes leg{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
-@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(0.1)}}
-@keyframes wave{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="120" height="80" shape-rendering="crispEdges"><style>
+.b{animation:bob ${bob} steps(2,end) infinite}
+.p1{animation:step ${step} steps(1,end) infinite}
+.p2{animation:step ${step} steps(1,end) infinite reverse}
+.e{animation:blink 3.6s steps(1,end) infinite;transform-box:fill-box;transform-origin:center}
+.a1{animation:wave ${bob} steps(1,end) infinite}
+.a2{animation:wave ${bob} steps(1,end) infinite reverse}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-${busy ? 4 : 2}px)}}
+@keyframes step{0%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}94%,98%{transform:scaleY(0.15)}}
+@keyframes wave{0%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 </style><g class="b">
-<rect class="a1" x="6" y="38" width="16" height="10" rx="5" fill="#c8582f"/>
-<rect class="a2" x="98" y="38" width="16" height="10" rx="5" fill="#c8582f"/>
-<rect class="l1" x="38" y="58" width="9" height="16" rx="4" fill="#c8582f"/>
-<rect class="l2" x="73" y="58" width="9" height="16" rx="4" fill="#c8582f"/>
-<rect x="18" y="14" width="84" height="52" rx="14" fill="#d97757"/>
-<ellipse class="e" cx="44" cy="38" rx="5" ry="7" fill="#2b1810"/>
-<ellipse class="e" cx="76" cy="38" rx="5" ry="7" fill="#2b1810"/>
+<rect class="a1" x="8" y="28" width="16" height="14" fill="#c8582f"/>
+<rect class="a2" x="96" y="28" width="16" height="14" fill="#c8582f"/>
+<rect x="24" y="8" width="72" height="40" fill="#d97757"/>
+<rect class="e" x="40" y="20" width="8" height="14" fill="#fbf3ec"/>
+<rect class="e" x="72" y="20" width="8" height="14" fill="#fbf3ec"/>
+<rect class="p1" x="32" y="48" width="8" height="16" fill="#c8582f"/>
+<rect class="p2" x="48" y="48" width="8" height="16" fill="#c8582f"/>
+<rect class="p1" x="64" y="48" width="8" height="16" fill="#c8582f"/>
+<rect class="p2" x="80" y="48" width="8" height="16" fill="#c8582f"/>
 </g></svg>`
 }
 
