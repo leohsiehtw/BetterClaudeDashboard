@@ -52,8 +52,8 @@ const MASCOT_SVG = (busy: boolean): string => {
 <rect class="a1" x="8" y="28" width="16" height="14" fill="#c8582f"/>
 <rect class="a2" x="96" y="28" width="16" height="14" fill="#c8582f"/>
 <rect x="24" y="8" width="72" height="40" fill="#d97757"/>
-<rect class="e" x="40" y="20" width="8" height="14" fill="#fbf3ec"/>
-<rect class="e" x="72" y="20" width="8" height="14" fill="#fbf3ec"/>
+<rect class="e" x="40" y="20" width="8" height="14" fill="#1a1a1a"/>
+<rect class="e" x="72" y="20" width="8" height="14" fill="#1a1a1a"/>
 <rect class="p1" x="32" y="48" width="8" height="16" fill="#c8582f"/>
 <rect class="p2" x="48" y="48" width="8" height="16" fill="#c8582f"/>
 <rect class="p1" x="64" y="48" width="8" height="16" fill="#c8582f"/>
