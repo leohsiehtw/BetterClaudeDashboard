@@ -19,7 +19,7 @@ import type {
 } from '../types'
 import { MASCOT_SVG, moodFor, spin } from './mascot'
 
-const PANE = 'claudecode-dashboard'
+const PANE = 'better-claude-dashboard'
 const CARD_IDS = ['session', 'context', 'turn', 'permissions', 'agents', 'log']
 
 function normalizeOrder(order: string[]): string[] {
@@ -58,20 +58,20 @@ function emptyActivity(sessionStartedAt: number): DashActivity {
 }
 
 // Change a shape tag whenever that value's type in ../types changes.
-const usage = atom({ plugin: 'claudecode-dashboard', key: 'usage' } as const, EMPTY_USAGE, {
+const usage = atom({ plugin: 'better-claude-dashboard', key: 'usage' } as const, EMPTY_USAGE, {
   shape: 'usage-4',
 })
-const agents = atom({ plugin: 'claudecode-dashboard', key: 'agents' } as const, [], {
+const agents = atom({ plugin: 'better-claude-dashboard', key: 'agents' } as const, [], {
   shape: 'agents-1',
 })
-const clockNow = atom({ plugin: 'claudecode-dashboard', key: 'now' } as const, 0)
-const activity = atom({ plugin: 'claudecode-dashboard', key: 'activity' } as const, emptyActivity(0), {
+const clockNow = atom({ plugin: 'better-claude-dashboard', key: 'now' } as const, 0)
+const activity = atom({ plugin: 'better-claude-dashboard', key: 'activity' } as const, emptyActivity(0), {
   shape: 'activity-1',
 })
-const layoutAtom = atom({ plugin: 'claudecode-dashboard', key: 'layout' } as const, { order: [], collapsed: [] } as DashLayout, {
+const layoutAtom = atom({ plugin: 'better-claude-dashboard', key: 'layout' } as const, { order: [], collapsed: [] } as DashLayout, {
   shape: 'layout-1',
 })
-const eventLog = atom({ plugin: 'claudecode-dashboard', key: 'log' } as const, [], {
+const eventLog = atom({ plugin: 'better-claude-dashboard', key: 'log' } as const, [], {
   shape: 'log-1',
 })
 
@@ -103,7 +103,7 @@ export const register: Register = on => {
       $,
       () =>
         $.command.register({
-          name: 'claudecode-dashboard',
+          name: 'better-claude-dashboard',
           description: 'Open the usage dashboard pane: plan limits, context, subagents',
           immediate: true,
         }),
@@ -113,7 +113,7 @@ export const register: Register = on => {
     return next(e)
   })
 
-  on('command.run', { command: 'claudecode-dashboard' }, async $ => {
+  on('command.run', { command: 'better-claude-dashboard' }, async $ => {
     const opened = await $.ui.open({ id: PANE, title: TITLE })
 
     return {
@@ -845,7 +845,7 @@ async function tick($: EngineInterface): Promise<void> {
 async function openPane($: EngineInterface): Promise<void> {
   try {
     const opened = await $.ui.open({ id: PANE, title: TITLE })
-    if (!opened.isPlaced) $.ui.log(`claudecode-dashboard: pane waits: ${opened.reason}`, { to: 'debug' })
+    if (!opened.isPlaced) $.ui.log(`better-claude-dashboard: pane waits: ${opened.reason}`, { to: 'debug' })
   } catch (error) {
     logError($, error)
   }
@@ -986,7 +986,7 @@ async function attempt<T>($: EngineInterface, fn: () => Promise<T>, fallback: T)
 }
 
 function logError($: EngineInterface, error: unknown): void {
-  $.ui.log(`claudecode-dashboard: ${String(error)}`, { to: 'debug' })
+  $.ui.log(`better-claude-dashboard: ${String(error)}`, { to: 'debug' })
 }
 
 // ---- formatting ----

@@ -1,6 +1,6 @@
-<p align="center"><img src="docs/icon.png" alt="ClaudeCode_Dashboard icon" width="96"></p>
+<p align="center"><img src="docs/icon.png" alt="BetterClaudeDashboard icon" width="96"></p>
 
-<h1 align="center">ClaudeCode_Dashboard</h1>
+<h1 align="center">BetterClaudeDashboard</h1>
 
 [English](README.md) · 繁體中文
 
@@ -25,11 +25,11 @@ Claude Code 桌面版的資源監視器。放在側邊面板，不離開 app 就
 
 ### 安裝
 
-外掛名稱：`claudecode-dashboard`。
+外掛名稱：`better-claude-dashboard`。
 
 ```
 claude plugin marketplace add <路徑或 repo>
-claude plugin install claudecode-dashboard@local-mods --scope user
+claude plugin install better-claude-dashboard@local-mods --scope user
 ```
 
 之後執行 `/reload-plugins`。以桌面版為主。

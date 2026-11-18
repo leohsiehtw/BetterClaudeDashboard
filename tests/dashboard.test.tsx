@@ -1,9 +1,9 @@
 import { expect, test } from 'claude-code/testing'
 
 const PANE = {
-  plugin: 'claudecode-dashboard',
+  plugin: 'better-claude-dashboard',
   component: 'Pane',
-  requestId: 'claudecode-dashboard',
+  requestId: 'better-claude-dashboard',
   props: {
     title: 'Usage',
     isFocused: false,
@@ -46,9 +46,9 @@ test('the widget glance draws on desktop', async $ => {
 test('a card folds when its arrow is pressed and opens again', async $ => {
   const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
   expect(await ui.find({ type: 'Text', text: /^last turn/ })).toBeTruthy()
-  await ui.press({ plugin: 'claudecode-dashboard', key: 'turn-fold' })
+  await ui.press({ plugin: 'better-claude-dashboard', key: 'turn-fold' })
   expect(await ui.find({ type: 'Text', text: /^last turn/ })).toBeFalsy()
-  await ui.press({ plugin: 'claudecode-dashboard', key: 'turn-fold' })
+  await ui.press({ plugin: 'better-claude-dashboard', key: 'turn-fold' })
   expect(await ui.find({ type: 'Text', text: /^last turn/ })).toBeTruthy()
   await ui.unmount()
 })

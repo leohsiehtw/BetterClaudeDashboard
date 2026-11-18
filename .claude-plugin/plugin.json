@@ -1,5 +1,5 @@
 {
-  "name": "claudecode-dashboard",
+  "name": "better-claude-dashboard",
   "version": "0.1.0",
   "description": "Live usage pane for the Claude desktop app: 5-hour and weekly plan limits with reset times, this session's context window and auto-compact threshold, and subagents with status and elapsed time.",
   "author": {

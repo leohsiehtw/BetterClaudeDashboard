@@ -1,6 +1,6 @@
-<p align="center"><img src="docs/icon.png" alt="ClaudeCode_Dashboard icon" width="96"></p>
+<p align="center"><img src="docs/icon.png" alt="BetterClaudeDashboard icon" width="96"></p>
 
-<h1 align="center">ClaudeCode_Dashboard</h1>
+<h1 align="center">BetterClaudeDashboard</h1>
 
 English · [繁體中文](README.zh-TW.md)
 
@@ -25,11 +25,11 @@ A resource monitor for Claude Code on desktop. It lives in a side pane and shows
 
 ### Install
 
-Plugin name: `claudecode-dashboard`.
+Plugin name: `better-claude-dashboard`.
 
 ```
 claude plugin marketplace add <path-or-repo>
-claude plugin install claudecode-dashboard@local-mods --scope user
+claude plugin install better-claude-dashboard@local-mods --scope user
 ```
 
 Then run `/reload-plugins`. Desktop is the target surface.

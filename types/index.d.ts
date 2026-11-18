@@ -65,7 +65,7 @@ export type DashLogEntry = { at: number; name: string; text: string; tone: 'info
 
 declare module 'claude-code' {
   interface PluginState {
-    'claudecode-dashboard': {
+    'better-claude-dashboard': {
       usage: Shaped<DashUsage>
       agents: Shaped<DashAgent[]>
       now: number
