@@ -59,6 +59,8 @@ export type DashActivity = {
   /** summed output tokens of each subagent's turns (turn.complete usage) */
   agentOut: Record<string, { out: number; model?: string }>
 }
+/** Card order and which cards are folded, kept across reloads. */
+export type DashLayout = { order: string[]; collapsed: string[] }
 export type DashLogEntry = { at: number; name: string; text: string; tone: 'info' | 'ok' | 'warn' | 'err' }
 
 declare module 'claude-code' {
@@ -69,6 +71,7 @@ declare module 'claude-code' {
       now: number
       activity: Shaped<DashActivity>
       log: Shaped<DashLogEntry[]>
+      layout: Shaped<DashLayout>
     }
   }
 }

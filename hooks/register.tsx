@@ -12,6 +12,7 @@ import type {
   DashActivity,
   DashAgent,
   DashAutoCompact,
+  DashLayout,
   DashLogEntry,
   DashUsage,
   DashWindow,
@@ -19,6 +20,11 @@ import type {
 import { MASCOT_SVG, moodFor, spin } from './mascot'
 
 const PANE = 'claudecode-dashboard'
+const CARD_IDS = ['session', 'context', 'turn', 'permissions', 'agents', 'log']
+
+function normalizeOrder(order: string[]): string[] {
+  return [...order.filter(id => CARD_IDS.includes(id)), ...CARD_IDS.filter(id => !order.includes(id))]
+}
 const TITLE = 'Usage'
 const DONE: readonly string[] = ['completed', 'failed', 'killed']
 const KEEP_FINISHED = 5
@@ -53,7 +59,7 @@ function emptyActivity(sessionStartedAt: number): DashActivity {
 
 // Change a shape tag whenever that value's type in ../types changes.
 const usage = atom({ plugin: 'claudecode-dashboard', key: 'usage' } as const, EMPTY_USAGE, {
-  shape: 'usage-3',
+  shape: 'usage-4',
 })
 const agents = atom({ plugin: 'claudecode-dashboard', key: 'agents' } as const, [], {
   shape: 'agents-1',
@@ -61,6 +67,9 @@ const agents = atom({ plugin: 'claudecode-dashboard', key: 'agents' } as const, 
 const clockNow = atom({ plugin: 'claudecode-dashboard', key: 'now' } as const, 0)
 const activity = atom({ plugin: 'claudecode-dashboard', key: 'activity' } as const, emptyActivity(0), {
   shape: 'activity-1',
+})
+const layoutAtom = atom({ plugin: 'claudecode-dashboard', key: 'layout' } as const, { order: [], collapsed: [] } as DashLayout, {
+  shape: 'layout-1',
 })
 const eventLog = atom({ plugin: 'claudecode-dashboard', key: 'log' } as const, [], {
   shape: 'log-1',
@@ -208,7 +217,29 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
-    const { Box, Text } = $.ui.resolve(e)
+    const { Box, Text, Button } = $.ui.resolve(e)
+    const layout = await read($, layoutAtom)
+    const order = normalizeOrder(layout.order)
+    const collapsedIds = new Set(layout.collapsed)
+    const toggleCard = (id: string): void =>
+      void update($, layoutAtom, cur => ({
+        order: normalizeOrder(cur.order),
+        collapsed: cur.collapsed.includes(id) ? cur.collapsed.filter(x => x !== id) : [...cur.collapsed, id],
+      }))
+    const moveCard = (id: string, delta: number): void =>
+      void update($, layoutAtom, cur => {
+        const next = normalizeOrder(cur.order)
+        const i = next.indexOf(id)
+        const j = i + delta
+        const other = next[j]
+        const mine = next[i]
+        if (i >= 0 && other !== undefined && mine !== undefined) {
+          next[i] = other
+          next[j] = mine
+        }
+
+        return { order: next, collapsed: cur.collapsed }
+      })
     const snap = await read($, usage)
     const rows = await read($, agents)
     const now = await read($, clockNow)
@@ -318,22 +349,37 @@ export const register: Register = on => {
           })()
         : null
 
-    return (
-      <Box flexDirection="column" gap="sm">
-        {art !== null && (
-          <Box flexDirection="column" alignItems="center">
-            {art}
-          </Box>
-        )}
-        <Box flexDirection="column" borderStyle="round" borderColor={ORANGE} paddingX={1}>
+    const card = (id: string, title: string, color: string, hint: JSX.Element | null, body: JSX.Element): JSX.Element => {
+      const isFolded = collapsedIds.has(id)
+      const at = order.indexOf(id)
+
+      return (
+        <Box key={id} flexDirection="column" borderStyle="round" borderColor={color} paddingX={1}>
           <Box justifyContent="space-between">
-            <Text bold color={ORANGE}>
-              SESSION
-            </Text>
-            <Text dimColor wrap="wrap">
-              {uptime !== undefined ? `up ${uptime}` : snap.measuredAt === 0 ? 'waiting' : 'live'}
-            </Text>
+            <Box>
+              <Button key={`${id}-fold`} label={isFolded ? '▸' : '▾'} onPress={() => toggleCard(id)} />
+              <Text bold color={color} wrap="wrap">{title}</Text>
+            </Box>
+            <Box>
+              {hint}
+              {hint !== null && <Text> </Text>}
+              {at > 0 && <Button key={`${id}-up`} label="↑" onPress={() => moveCard(id, -1)} />}
+              {at < order.length - 1 && <Button key={`${id}-down`} label="↓" onPress={() => moveCard(id, 1)} />}
+            </Box>
           </Box>
+          {!isFolded && body}
+        </Box>
+      )
+    }
+    const cards: Record<string, JSX.Element | null> = {
+      session: card(
+        'session',
+        'SESSION',
+        ORANGE,
+        <Text dimColor wrap="wrap">
+          {uptime !== undefined ? `up ${uptime}` : snap.measuredAt === 0 ? 'waiting' : 'live'}
+        </Text>,
+        <Box flexDirection="column">
           <Text wrap="wrap">{modeLine !== '' ? modeLine : 'model · waiting for a reading'}</Text>
           {statLine !== '' && <Text dimColor wrap="wrap">{statLine}</Text>}
           {ctx.tokens === undefined ? (
@@ -354,11 +400,6 @@ export const register: Register = on => {
               {autoCompactText(snap.autoCompact, ctx.window)}
             </Text>
           )}
-          {snap.categories !== undefined && snap.categories.length > 0 && (
-            <Text dimColor wrap="wrap">
-              {[...snap.categories].filter(cat => cat.kind === 'used').sort((x, y) => y.tokens - x.tokens).slice(0, 4).map(cat => `${cat.name} ${fmtCompact(cat.tokens)}`).join(' · ')}
-            </Text>
-          )}
           {snap.measuredAt !== 0 && snap.rateLimits.length === 0 && (
             <Text dimColor>plan limits · no reading yet (subscription only)</Text>
           )}
@@ -375,40 +416,38 @@ export const register: Register = on => {
               )}
             </Box>
           ))}
-        </Box>
-
-        {contextRows.length > 0 && (
-          <Box flexDirection="column" borderStyle="round" borderColor={CYAN} paddingX={1}>
-            <Box justifyContent="space-between">
-              <Text bold color={CYAN}>
-                CONTEXT
-              </Text>
-              <Text dimColor>{`${ctx.tokens === undefined ? '?' : fmtCompact(ctx.tokens)} / ${fmtCompact(snap.windowTokens ?? ctx.window)}`}</Text>
-            </Box>
-            {contextBar}
-            {contextRows}
-            {snap.counts !== undefined && Object.keys(snap.counts).length > 0 && (
-              <Text dimColor wrap="wrap">
-                {[
-                  snap.counts.mcp === undefined ? '' : `MCP tools ${snap.counts.mcp}`,
-                  snap.counts.memory === undefined ? '' : `memory files ${snap.counts.memory}`,
-                  snap.counts.agents === undefined ? '' : `agents ${snap.counts.agents}`,
-                ]
-                  .filter(part => part !== '')
-                  .join(' · ')}
-              </Text>
-            )}
-          </Box>
-        )}
-        <Box flexDirection="column" borderStyle="round" borderColor={TEAL} paddingX={1}>
-          <Box justifyContent="space-between">
-            <Text bold color={TEAL}>
-              TURN
-            </Text>
-            <Text color={turnRunning ? AMBER : TRACK} wrap="wrap">
-              {turnHead}
-            </Text>
-          </Box>
+        </Box>,
+      ),
+      context:
+        contextRows.length === 0
+          ? null
+          : card(
+              'context',
+              'CONTEXT',
+              CYAN,
+              <Text dimColor>{`${ctx.tokens === undefined ? '?' : fmtCompact(ctx.tokens)} / ${fmtCompact(snap.windowTokens ?? ctx.window)}`}</Text>,
+              <Box flexDirection="column">
+                {contextBar}
+                {contextRows}
+                {snap.counts !== undefined && Object.keys(snap.counts).length > 0 && (
+                  <Text dimColor wrap="wrap">
+                    {[
+                      snap.counts.mcp === undefined ? '' : `MCP tools ${snap.counts.mcp}`,
+                      snap.counts.memory === undefined ? '' : `memory files ${snap.counts.memory}`,
+                      snap.counts.agents === undefined ? '' : `agents ${snap.counts.agents}`,
+                    ]
+                      .filter(part => part !== '')
+                      .join(' · ')}
+                  </Text>
+                )}
+              </Box>,
+            ),
+      turn: card(
+        'turn',
+        'TURN',
+        TEAL,
+        <Text color={turnRunning ? AMBER : TRACK} wrap="wrap">{turnHead}</Text>,
+        <Box flexDirection="column">
           <Text wrap="wrap">
             <Text dimColor>calls </Text>
             <Text bold>{String(turn.calls)}</Text>
@@ -425,12 +464,14 @@ export const register: Register = on => {
           <Text dimColor wrap="wrap">
             {`session edits ${act.edits} · errors ${act.errors}`}
           </Text>
-        </Box>
-
-        <Box flexDirection="column" borderStyle="round" borderColor={AMBER} paddingX={1}>
-          <Text bold color={AMBER}>
-            PERMISSIONS
-          </Text>
+        </Box>,
+      ),
+      permissions: card(
+        'permissions',
+        'PERMISSIONS',
+        AMBER,
+        null,
+        <Box flexDirection="column">
           <Text wrap="wrap">
             <Text color={GREEN}>{`✓ ${c.allow} allow`}</Text>
             <Text dimColor> · </Text>
@@ -452,12 +493,14 @@ export const register: Register = on => {
           <Text dimColor wrap="wrap">
             {topTools !== '' ? topTools : 'no tool calls yet'}
           </Text>
-        </Box>
-
-        <Box flexDirection="column" borderStyle="round" borderColor={INDIGO} paddingX={1}>
-          <Text bold color={INDIGO} wrap="wrap">
-            {`AGENTS · ${live.length} running · ${rows.length} total`}
-          </Text>
+        </Box>,
+      ),
+      agents: card(
+        'agents',
+        `AGENTS · ${live.length} running · ${rows.length} total`,
+        INDIGO,
+        null,
+        <Box flexDirection="column">
           {rows.length === 0 && <Text dimColor>No subagents yet.</Text>}
           <Box flexDirection="column" gap="sm">
             {rows.map(row => {
@@ -493,12 +536,14 @@ export const register: Register = on => {
               )
             })}
           </Box>
-        </Box>
-
-        <Box flexDirection="column" borderStyle="round" borderColor={BLUE} paddingX={1}>
-          <Text bold color={BLUE}>
-            SESSION LOG
-          </Text>
+        </Box>,
+      ),
+      log: card(
+        'log',
+        'SESSION LOG',
+        BLUE,
+        null,
+        <Box flexDirection="column">
           {shownLog.length === 0 && <Text dimColor>No events yet.</Text>}
           {shownLog.map(entry => (
             <Text wrap="wrap">
@@ -507,7 +552,18 @@ export const register: Register = on => {
               <Text dimColor>{entry.text === '' ? '' : ` ${entry.text}`}</Text>
             </Text>
           ))}
-        </Box>
+        </Box>,
+      ),
+    }
+
+    return (
+      <Box flexDirection="column" gap="sm">
+        {art !== null && (
+          <Box flexDirection="column" alignItems="center">
+            {art}
+          </Box>
+        )}
+        {order.map(id => cards[id] ?? null)}
       </Box>
     )
   })

@@ -42,3 +42,13 @@ test('the widget glance draws on desktop', async $ => {
   expect((await ui.find({ type: 'Text', text: /subagents active/ }))?.text).toBe('no subagents active')
   await ui.unmount()
 })
+
+test('a card folds when its arrow is pressed and opens again', async $ => {
+  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  expect(await ui.find({ type: 'Text', text: /^last turn/ })).toBeTruthy()
+  await ui.press({ plugin: 'claudecode-dashboard', key: 'turn-fold' })
+  expect(await ui.find({ type: 'Text', text: /^last turn/ })).toBeFalsy()
+  await ui.press({ plugin: 'claudecode-dashboard', key: 'turn-fold' })
+  expect(await ui.find({ type: 'Text', text: /^last turn/ })).toBeTruthy()
+  await ui.unmount()
+})
