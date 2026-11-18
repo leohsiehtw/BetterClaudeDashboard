@@ -16,7 +16,7 @@ import type {
   DashUsage,
   DashWindow,
 } from '../types'
-import { MASCOT_SVG, mascot, moodFor, spin } from './mascot'
+import { mascot, mascotSvg, moodFor, spin } from './mascot'
 
 const PANE = 'claudecode-dashboard'
 const TITLE = 'Usage'
@@ -275,7 +275,7 @@ export const register: Register = on => {
         (() => {
           const { Svg } = $.ui.resolve(e)
 
-          return <Svg source={MASCOT_SVG(moodFor(now, isBusy))} alt="Mascot" isInteractive />
+          return <Svg source={mascotSvg(moodFor(now, isBusy))} alt="Mascot" isInteractive />
         })()
       ) : (
         mascot(now, isBusy).map((line, i) => (

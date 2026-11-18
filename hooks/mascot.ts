@@ -1,3 +1,5 @@
+import { VIDEO_IDLE, VIDEO_PLAY } from './mascot-video'
+
 const SPIN = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
 
 /** Own pixel-style mascot sketch (not an official asset): legs shuffle while busy, eyes blink when idle. */
@@ -122,4 +124,11 @@ ${rightArm}
 
 export function spin(now: number): string {
   return SPIN[Math.floor(now / 1000) % SPIN.length] ?? '⠋'
+}
+
+/** Optional local art: when hooks/mascot-video.ts holds SVG strings they replace the drawn mascot; the committed file holds empty strings. */
+export function mascotSvg(mood: Mood): string {
+  if (VIDEO_PLAY === '' || VIDEO_IDLE === '') return MASCOT_SVG(mood)
+
+  return mood === 'idle' ? VIDEO_IDLE : VIDEO_PLAY
 }

@@ -20,7 +20,7 @@ A resource monitor for Claude Code on desktop. It lives in a side pane and shows
 - **Permissions**: allow / ask / deny counts, file / shell / other split, top tools.
 - **Subagents**: one card each with name, description, status, elapsed time, output tokens and model.
 - **Session log**: the last 12 events (tools, permissions, turns, subagents).
-- **Animated mascot**: a pixel-style critter that sleeps and looks around when idle, and while Claude works rotates through typing on a laptop, pacing, hopping and reading. A spinner marks the running turn and live subagents. Drawn as SVG on desktop, text fallback elsewhere.
+- **Animated mascot**: the Claude mascot, animated: it sleeps and looks around when idle, and while Claude works it rotates through using a laptop, reading, searching, having coffee, pacing, getting ideas and hopping. A spinner marks the running turn and live subagents. Drawn as SVG on desktop, text fallback elsewhere.
 - **Reopenable**: the `Usage ▸` button above the prompt brings the pane back after closing it.
 - Works in light and dark mode, text wraps in a narrow pane.
 
