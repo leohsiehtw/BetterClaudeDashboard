@@ -356,7 +356,7 @@ export const register: Register = on => {
         ? (() => {
             const { Svg } = $.ui.resolve(e)
 
-            return <Svg source={artSource} alt="Mascot" isInteractive />
+            return <Svg source={artSource} alt="Mascot" width={216} height={148} />
           })()
         : null
 
@@ -422,7 +422,7 @@ export const register: Register = on => {
             <Text dimColor>plan limits · no reading yet (subscription only)</Text>
           )}
           {snap.rateLimits.map(w => (
-            <Box flexDirection="column">
+            <Box key={w.kind} flexDirection="column">
               <Text wrap="wrap">
                 <Text dimColor>{`${shortWindow(w.kind)}  `}</Text>
                 <Text color={levelColor(w.percentUsed)}>{barFill(w.percentUsed)}</Text>
@@ -528,6 +528,7 @@ export const register: Register = on => {
 
               return (
                 <Box
+                  key={row.id}
                   flexDirection="column"
                   borderStyle="round"
                   borderColor={isLive ? AMBER : isBad ? RED : TRACK}
@@ -564,7 +565,7 @@ export const register: Register = on => {
         <Box flexDirection="column">
           {shownLog.length === 0 && <Text dimColor>No events yet.</Text>}
           {shownLog.map(entry => (
-            <Text wrap="wrap">
+            <Text key={`${entry.at}-${entry.name}-${entry.text}`} wrap="wrap">
               <Text dimColor>{`${fmtClock(entry.at)} `}</Text>
               <Text color={toneColor(entry.tone)}>{entry.name}</Text>
               <Text dimColor>{entry.text === '' ? '' : ` ${entry.text}`}</Text>
