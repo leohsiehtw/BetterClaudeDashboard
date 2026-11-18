@@ -16,7 +16,7 @@ import type {
   DashUsage,
   DashWindow,
 } from '../types'
-import { mascot, mascotSvg, moodFor, spin } from './mascot'
+import { mascotSvg, spin } from './mascot'
 
 const PANE = 'claudecode-dashboard'
 const TITLE = 'Usage'
@@ -270,26 +270,23 @@ export const register: Register = on => {
       .join(' · ')
     const shownLog = log.slice(-LOG_SHOWN)
     const isBusy = turnRunning || live.length > 0
+    const artSource = mascotSvg(isBusy)
     const art =
-      e.surface === 'desktop' ? (
-        (() => {
-          const { Svg } = $.ui.resolve(e)
+      e.surface === 'desktop' && artSource !== ''
+        ? (() => {
+            const { Svg } = $.ui.resolve(e)
 
-          return <Svg source={mascotSvg(moodFor(now, isBusy))} alt="Mascot" isInteractive />
-        })()
-      ) : (
-        mascot(now, isBusy).map((line, i) => (
-          <Text key={String(i)} color={ORANGE}>
-            {line}
-          </Text>
-        ))
-      )
+            return <Svg source={artSource} alt="Mascot" isInteractive />
+          })()
+        : null
 
     return (
       <Box flexDirection="column" gap="sm">
-        <Box flexDirection="column" alignItems="center">
-          {art}
-        </Box>
+        {art !== null && (
+          <Box flexDirection="column" alignItems="center">
+            {art}
+          </Box>
+        )}
         <Box flexDirection="column" borderStyle="round" borderColor={ORANGE} paddingX={1}>
           <Box justifyContent="space-between">
             <Text bold color={ORANGE}>
