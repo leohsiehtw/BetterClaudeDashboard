@@ -24,8 +24,17 @@ const KEEP_FINISHED = 5
 const TICK_MS = 1_000
 const SPIN = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
 
+/** Own pixel-style mascot sketch (not an official asset): legs shuffle while busy, eyes blink when idle. */
+function mascot(now: number, busy: boolean): string[] {
+  const t = Math.floor(now / 1000)
+  const eyes = busy ? (t % 2 === 0 ? '▘ ▝' : '▖ ▗') : t % 6 === 0 ? '▁ ▁' : '▘ ▝'
+  const legs = busy ? (t % 2 === 0 ? '▘▘ ▝▝' : ' ▘▝▘ ') : '▘▘ ▝▝'
+
+  return [' ▗▟█████▙▖', `▐█ ${eyes} █▌`, ` ▝▜█████▛▘`, `   ${legs}`]
+}
+
 function spin(now: number): string {
-  return SPIN[Math.floor(now / 1000) % SPIN.length]
+  return SPIN[Math.floor(now / 1000) % SPIN.length] ?? '⠋'
 }
 const USAGE_EVERY_TICKS = 3
 const BREAKDOWN_EVERY_MS = 60_000
@@ -276,6 +285,13 @@ export const register: Register = on => {
 
     return (
       <Box flexDirection="column" gap="sm">
+        <Box flexDirection="column" alignItems="center">
+          {mascot(now, turnRunning || live.length > 0).map((line, i) => (
+            <Text key={String(i)} color={ORANGE}>
+              {line}
+            </Text>
+          ))}
+        </Box>
         <Box flexDirection="column" borderStyle="round" borderColor={ORANGE} paddingX={1}>
           <Box justifyContent="space-between">
             <Text bold color={ORANGE}>
