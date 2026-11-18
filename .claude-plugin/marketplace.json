@@ -1,1 +1,1 @@
-﻿{ "name": "local-mods", "owner": { "name": "LH" }, "plugins": [ { "name": "usage-dashboard", "source": "./" } ] }
+﻿{ "name": "local-mods", "owner": { "name": "LH" }, "plugins": [ { "name": "claudecode-dashboard", "source": "./" } ] }

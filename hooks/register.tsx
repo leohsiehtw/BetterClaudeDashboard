@@ -17,7 +17,7 @@ import type {
   DashWindow,
 } from '../types'
 
-const PANE = 'usage-dashboard'
+const PANE = 'claudecode-dashboard'
 const TITLE = 'Usage'
 const DONE: readonly string[] = ['completed', 'failed', 'killed']
 const KEEP_FINISHED = 5
@@ -51,17 +51,17 @@ function emptyActivity(sessionStartedAt: number): DashActivity {
 }
 
 // Change a shape tag whenever that value's type in ../types changes.
-const usage = atom({ plugin: 'usage-dashboard', key: 'usage' } as const, EMPTY_USAGE, {
+const usage = atom({ plugin: 'claudecode-dashboard', key: 'usage' } as const, EMPTY_USAGE, {
   shape: 'usage-3',
 })
-const agents = atom({ plugin: 'usage-dashboard', key: 'agents' } as const, [], {
+const agents = atom({ plugin: 'claudecode-dashboard', key: 'agents' } as const, [], {
   shape: 'agents-1',
 })
-const clockNow = atom({ plugin: 'usage-dashboard', key: 'now' } as const, 0)
-const activity = atom({ plugin: 'usage-dashboard', key: 'activity' } as const, emptyActivity(0), {
+const clockNow = atom({ plugin: 'claudecode-dashboard', key: 'now' } as const, 0)
+const activity = atom({ plugin: 'claudecode-dashboard', key: 'activity' } as const, emptyActivity(0), {
   shape: 'activity-1',
 })
-const eventLog = atom({ plugin: 'usage-dashboard', key: 'log' } as const, [], {
+const eventLog = atom({ plugin: 'claudecode-dashboard', key: 'log' } as const, [], {
   shape: 'log-1',
 })
 
@@ -93,7 +93,7 @@ export const register: Register = on => {
       $,
       () =>
         $.command.register({
-          name: 'usage-dashboard',
+          name: 'claudecode-dashboard',
           description: 'Open the usage dashboard pane: plan limits, context, subagents',
           immediate: true,
         }),
@@ -103,7 +103,7 @@ export const register: Register = on => {
     return next(e)
   })
 
-  on('command.run', { command: 'usage-dashboard' }, async $ => {
+  on('command.run', { command: 'claudecode-dashboard' }, async $ => {
     const opened = await $.ui.open({ id: PANE, title: TITLE })
 
     return {
@@ -680,7 +680,7 @@ async function tick($: EngineInterface): Promise<void> {
 async function openPane($: EngineInterface): Promise<void> {
   try {
     const opened = await $.ui.open({ id: PANE, title: TITLE })
-    if (!opened.isPlaced) $.ui.log(`usage-dashboard: pane waits: ${opened.reason}`, { to: 'debug' })
+    if (!opened.isPlaced) $.ui.log(`claudecode-dashboard: pane waits: ${opened.reason}`, { to: 'debug' })
   } catch (error) {
     logError($, error)
   }
@@ -813,7 +813,7 @@ async function attempt<T>($: EngineInterface, fn: () => Promise<T>, fallback: T)
 }
 
 function logError($: EngineInterface, error: unknown): void {
-  $.ui.log(`usage-dashboard: ${String(error)}`, { to: 'debug' })
+  $.ui.log(`claudecode-dashboard: ${String(error)}`, { to: 'debug' })
 }
 
 // ---- formatting ----

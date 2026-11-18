@@ -1,9 +1,9 @@
 import { expect, test } from 'claude-code/testing'
 
 const PANE = {
-  plugin: 'usage-dashboard',
+  plugin: 'claudecode-dashboard',
   component: 'Pane',
-  requestId: 'usage-dashboard',
+  requestId: 'claudecode-dashboard',
   props: {
     title: 'Usage',
     isFocused: false,
