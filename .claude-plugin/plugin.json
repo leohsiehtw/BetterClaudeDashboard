@@ -4,5 +4,7 @@
   "description": "Live usage pane for the Claude desktop app: 5-hour and weekly plan limits with reset times, this session's context window and auto-compact threshold, and subagents with status and elapsed time.",
   "author": {
     "name": "leohsiehtw"
-  }
+  },
+  "license": "MIT",
+  "icon": ".claude-plugin/icon.png"
 }
