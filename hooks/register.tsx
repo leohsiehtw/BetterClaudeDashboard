@@ -66,15 +66,15 @@ const MASCOT_SVG = (busy: boolean): string => {
 @keyframes wave{0%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 ${extra}
 </style><g transform="translate(20,12)"><g class="${busy ? 'w' : ''}">${marks}<g class="b">
-<g class="${busy ? '' : 'hi'}"><rect class="a1" x="8" y="28" width="16" height="14" fill="#c8582f"/></g>
-<rect class="a2" x="96" y="28" width="16" height="14" fill="#c8582f"/>
+<g class="${busy ? '' : 'hi'}"><rect class="a1" x="8" y="28" width="16" height="14" fill="#d97757"/></g>
+<rect class="a2" x="96" y="28" width="16" height="14" fill="#d97757"/>
 <rect x="24" y="8" width="72" height="40" fill="#d97757"/>
 <g class="${busy ? '' : 'look'}"><rect class="e" x="40" y="20" width="8" height="14" fill="#1a1a1a"/>
 <rect class="e" x="72" y="20" width="8" height="14" fill="#1a1a1a"/></g>
-<rect class="p1" x="32" y="48" width="8" height="16" fill="#c8582f"/>
-<rect class="p2" x="48" y="48" width="8" height="16" fill="#c8582f"/>
-<rect class="p1" x="64" y="48" width="8" height="16" fill="#c8582f"/>
-<rect class="p2" x="80" y="48" width="8" height="16" fill="#c8582f"/>
+<rect class="p1" x="32" y="48" width="8" height="16" fill="#d97757"/>
+<rect class="p2" x="48" y="48" width="8" height="16" fill="#d97757"/>
+<rect class="p1" x="64" y="48" width="8" height="16" fill="#d97757"/>
+<rect class="p2" x="80" y="48" width="8" height="16" fill="#d97757"/>
 </g></g></g></svg>`
 }
 
