@@ -307,23 +307,34 @@ export const register: Register = on => {
     const swatches = [BLUE, ORANGE, TEAL, AMBER, INDIGO, RED, GREEN, TRACK]
     const used = cats.filter(c => c.kind === 'used').sort((x, y) => y.tokens - x.tokens)
     const rest = cats.filter(c => c.kind !== 'used')
-    const BAR = 24
-    const barCells: { color: string }[] = []
+    const COLS = 20
+    const ROWS = 5
+    const cellsTotal = COLS * ROWS
+    const gridCells: { color: string; filled: boolean }[] = []
+    const addCells = (n: number, color: string, filled: boolean): void => {
+      for (let i = 0; i < n && gridCells.length < cellsTotal; i += 1) gridCells.push({ color, filled })
+    }
     used.forEach((c, n) => {
-      const cells = win > 0 ? Math.max(c.tokens > 0 ? 1 : 0, Math.round((c.tokens / win) * BAR)) : 0
-      for (let i = 0; i < cells && barCells.length < BAR; i += 1) barCells.push({ color: swatches[n % swatches.length] ?? TRACK })
+      const cells = win > 0 ? Math.max(c.tokens > 0 ? 1 : 0, Math.round((c.tokens / win) * cellsTotal)) : 0
+      addCells(cells, swatches[n % swatches.length] ?? TRACK, true)
     })
-    const barUsed = barCells.length
+    rest
+      .filter(c => c.kind === 'buffer')
+      .forEach(c => addCells(Math.max(1, Math.round((c.tokens / Math.max(win, 1)) * cellsTotal)), AMBER, true))
+    while (gridCells.length < cellsTotal) gridCells.push({ color: TRACK, filled: false })
     const contextBar = (
-      <Text>
-        {barCells.map((cell, i) => (
-          <Text key={String(i)} color={cell.color}>
-            ▰
+      <Box flexDirection="column">
+        {Array.from({ length: ROWS }, (_, r) => (
+          <Text key={String(r)}>
+            {gridCells.slice(r * COLS, (r + 1) * COLS).map((cell, i) => (
+              <Text key={String(i)} color={cell.color}>
+                {cell.filled ? '■' : '□'}
+              </Text>
+            ))}
           </Text>
         ))}
-        <Text color={TRACK}>{'▱'.repeat(Math.max(0, BAR - barUsed))}</Text>
-        <Text bold>{` ${ctxPct}%`}</Text>
-      </Text>
+        <Text bold>{`${ctxPct}% used`}</Text>
+      </Box>
     )
     const contextRows = [
       ...used.map((c, n) => ({ c, color: swatches[n % swatches.length] ?? TRACK, dim: false })),
@@ -333,7 +344,7 @@ export const register: Register = on => {
         <Box>
           <Text color={color}>■ </Text>
           <Text dimColor={dim} wrap="wrap">
-            {c.kind === 'deferred' ? `${c.name} (deferred)` : c.name}
+            {c.name}
           </Text>
         </Box>
         <Text dimColor>{c.kind === 'deferred' ? fmtCompact(c.tokens) : `${fmtCompact(c.tokens)} ${share(c.tokens)}`}</Text>
@@ -356,15 +367,22 @@ export const register: Register = on => {
       return (
         <Box key={id} flexDirection="column" borderStyle="round" borderColor={color} paddingX={1}>
           <Box justifyContent="space-between">
-            <Box>
-              <Button key={`${id}-fold`} label={isFolded ? '▸' : '▾'} onPress={() => toggleCard(id)} />
-              <Text bold color={color} wrap="wrap">{title}</Text>
-            </Box>
+            <Button key={`${id}-fold`} onPress={() => toggleCard(id)}>
+              <Text bold color={color}>{`${isFolded ? '▸' : '▾'} ${title}`}</Text>
+            </Button>
             <Box>
               {hint}
               {hint !== null && <Text> </Text>}
-              {at > 0 && <Button key={`${id}-up`} label="↑" onPress={() => moveCard(id, -1)} />}
-              {at < order.length - 1 && <Button key={`${id}-down`} label="↓" onPress={() => moveCard(id, 1)} />}
+              {at > 0 && (
+                <Button key={`${id}-up`} onPress={() => moveCard(id, -1)}>
+                  <Text dimColor>{' ↑ '}</Text>
+                </Button>
+              )}
+              {at < order.length - 1 && (
+                <Button key={`${id}-down`} onPress={() => moveCard(id, 1)}>
+                  <Text dimColor>{' ↓ '}</Text>
+                </Button>
+              )}
             </Box>
           </Box>
           {!isFolded && body}
