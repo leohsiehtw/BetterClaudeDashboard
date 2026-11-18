@@ -276,6 +276,24 @@ export const register: Register = on => {
     const swatches = [BLUE, ORANGE, TEAL, AMBER, INDIGO, RED, GREEN, TRACK]
     const used = cats.filter(c => c.kind === 'used').sort((x, y) => y.tokens - x.tokens)
     const rest = cats.filter(c => c.kind !== 'used')
+    const BAR = 24
+    const barCells: { color: string }[] = []
+    used.forEach((c, n) => {
+      const cells = win > 0 ? Math.max(c.tokens > 0 ? 1 : 0, Math.round((c.tokens / win) * BAR)) : 0
+      for (let i = 0; i < cells && barCells.length < BAR; i += 1) barCells.push({ color: swatches[n % swatches.length] ?? TRACK })
+    })
+    const barUsed = barCells.length
+    const contextBar = (
+      <Text>
+        {barCells.map((cell, i) => (
+          <Text key={String(i)} color={cell.color}>
+            ▰
+          </Text>
+        ))}
+        <Text color={TRACK}>{'▱'.repeat(Math.max(0, BAR - barUsed))}</Text>
+        <Text bold>{` ${ctxPct}%`}</Text>
+      </Text>
+    )
     const contextRows = [
       ...used.map((c, n) => ({ c, color: swatches[n % swatches.length] ?? TRACK, dim: false })),
       ...rest.map(c => ({ c, color: TRACK, dim: true })),
@@ -367,6 +385,7 @@ export const register: Register = on => {
               </Text>
               <Text dimColor>{`${ctx.tokens === undefined ? '?' : fmtCompact(ctx.tokens)} / ${fmtCompact(snap.windowTokens ?? ctx.window)}`}</Text>
             </Box>
+            {contextBar}
             {contextRows}
             {snap.counts !== undefined && Object.keys(snap.counts).length > 0 && (
               <Text dimColor wrap="wrap">
