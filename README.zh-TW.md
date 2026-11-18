@@ -10,7 +10,7 @@ Claude Code 桌面版的資源監視器。放在側邊面板，不離開 app 就
 
 ### 吉祥物
 
-<table><tr><td align="center"><img src="docs/moods/idle.gif" width="190"><br><sub>閒置：睡覺、東張西望、打招呼</sub></td><td align="center"><img src="docs/moods/laptop.gif" width="190"><br><sub>用筆電打字</sub></td><td align="center"><img src="docs/moods/walk.gif" width="190"><br><sub>邊走邊想</sub></td><td align="center"><img src="docs/moods/hop.gif" width="190"><br><sub>跳躍</sub></td></tr><tr><td align="center"><img src="docs/moods/read.gif" width="190"><br><sub>看書</sub></td><td align="center"><img src="docs/moods/search.gif" width="190"><br><sub>搜尋</sub></td><td align="center"><img src="docs/moods/bulb.gif" width="190"><br><sub>靈光一閃</sub></td><td align="center"><img src="docs/moods/coffee.gif" width="190"><br><sub>喝咖啡休息</sub></td></tr></table>
+<table><tr><td align="center"><img src="docs/moods/idle.gif" width="190"><br><sub>閒置：睡覺、東張西望、打招呼</sub></td><td align="center"><img src="docs/moods/laptop.gif" width="190"><br><sub>盯著筆電螢幕</sub></td><td align="center"><img src="docs/moods/walk.gif" width="190"><br><sub>邊走邊想</sub></td><td align="center"><img src="docs/moods/hop.gif" width="190"><br><sub>跳躍</sub></td></tr><tr><td align="center"><img src="docs/moods/read.gif" width="190"><br><sub>看書</sub></td><td align="center"><img src="docs/moods/search.gif" width="190"><br><sub>搜尋</sub></td><td align="center"><img src="docs/moods/bulb.gif" width="190"><br><sub>靈光一閃</sub></td><td align="center"><img src="docs/moods/coffee.gif" width="190"><br><sub>喝咖啡休息</sub></td></tr></table>
 
 ### 功能
 
@@ -20,7 +20,7 @@ Claude Code 桌面版的資源監視器。放在側邊面板，不離開 app 就
 - **Permissions**：允許 / 詢問 / 拒絕次數、檔案 / shell / 其他分類、前幾名工具。
 - **Subagents**：每個一張卡，顯示名稱、說明、狀態、經過時間、輸出 token 與模型。
 - **Session log**：最近 12 筆事件（工具、權限、回合、subagent）。
-- **會動的吉祥物**：像素風小生物，閒置時睡覺、東張西望，Claude 工作時輪流表演用筆電打字、踱步、跳躍、看書。進行中的回合和 subagent 前有轉動的 spinner。桌面版用 SVG 繪製，其他環境退回文字版。
+- **會動的吉祥物**：像素風小生物，閒置時睡覺、東張西望，Claude 工作時輪流表演盯著筆電螢幕、踱步、跳躍、看書。進行中的回合和 subagent 前有轉動的 spinner。桌面版用 SVG 繪製，其他環境退回文字版。
 - **可重開**：關掉面板後，用輸入框上方的 `Usage ▸` 按鈕重新打開。
 - 淺色與深色模式都可讀，窄面板文字會自動換行。
 
