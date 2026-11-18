@@ -1,0 +1,1 @@
+﻿{ "name": "local-mods", "owner": { "name": "LH" }, "plugins": [ { "name": "usage-dashboard", "source": "./" } ] }
