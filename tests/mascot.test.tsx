@@ -1,11 +1,18 @@
 import { expect, test } from 'claude-code/testing'
 
-import { mascotSvg, spin } from '../hooks/mascot'
+import { MASCOT_SVG, MOODS, moodFor, spin } from '../hooks/mascot'
 
-test('optional art is either empty or an SVG under the size limit', async () => {
-  for (const busy of [false, true]) {
-    const svg = mascotSvg(busy)
-    expect(svg === '' || (svg.startsWith('<svg') && svg.endsWith('</svg>') && svg.length < 131_072)).toBe(true)
+test('idle stays idle and busy rotates through every mood', async () => {
+  expect(moodFor(123_456, false)).toBe('idle')
+  expect(new Set(MOODS.map((_, i) => moodFor(i * 8000, true))).size).toBe(MOODS.length)
+})
+
+test('every mood is a well-formed SVG under the size limit', async () => {
+  for (const mood of ['idle', ...MOODS] as const) {
+    const svg = MASCOT_SVG(mood)
+    expect(svg.startsWith('<svg')).toBe(true)
+    expect(svg.endsWith('</svg>')).toBe(true)
+    expect(svg.length).toBeLessThan(131_072)
   }
 })
 

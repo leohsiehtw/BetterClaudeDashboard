@@ -16,7 +16,7 @@ import type {
   DashUsage,
   DashWindow,
 } from '../types'
-import { mascotSvg, spin } from './mascot'
+import { MASCOT_SVG, moodFor, spin } from './mascot'
 
 const PANE = 'claudecode-dashboard'
 const TITLE = 'Usage'
@@ -270,9 +270,29 @@ export const register: Register = on => {
       .join(' · ')
     const shownLog = log.slice(-LOG_SHOWN)
     const isBusy = turnRunning || live.length > 0
-    const artSource = mascotSvg(isBusy)
+    const cats = snap.categories ?? []
+    const win = snap.windowTokens ?? ctx.window
+    const share = (tokens: number): string => (win > 0 ? `${((tokens / win) * 100).toFixed(1)}%` : '')
+    const swatches = [BLUE, ORANGE, TEAL, AMBER, INDIGO, RED, GREEN, TRACK]
+    const used = cats.filter(c => c.kind === 'used').sort((x, y) => y.tokens - x.tokens)
+    const rest = cats.filter(c => c.kind !== 'used')
+    const contextRows = [
+      ...used.map((c, n) => ({ c, color: swatches[n % swatches.length] ?? TRACK, dim: false })),
+      ...rest.map(c => ({ c, color: TRACK, dim: true })),
+    ].map(({ c, color, dim }) => (
+      <Box key={c.name} justifyContent="space-between">
+        <Box>
+          <Text color={color}>■ </Text>
+          <Text dimColor={dim} wrap="wrap">
+            {c.kind === 'deferred' ? `${c.name} (deferred)` : c.name}
+          </Text>
+        </Box>
+        <Text dimColor>{c.kind === 'deferred' ? fmtCompact(c.tokens) : `${fmtCompact(c.tokens)} ${share(c.tokens)}`}</Text>
+      </Box>
+    ))
+    const artSource = MASCOT_SVG(moodFor(now, isBusy))
     const art =
-      e.surface === 'desktop' && artSource !== ''
+      e.surface === 'desktop'
         ? (() => {
             const { Svg } = $.ui.resolve(e)
 
@@ -318,7 +338,7 @@ export const register: Register = on => {
           )}
           {snap.categories !== undefined && snap.categories.length > 0 && (
             <Text dimColor wrap="wrap">
-              {snap.categories.map(cat => `${cat.name} ${fmtCompact(cat.tokens)}`).join(' · ')}
+              {[...snap.categories].filter(cat => cat.kind === 'used').sort((x, y) => y.tokens - x.tokens).slice(0, 4).map(cat => `${cat.name} ${fmtCompact(cat.tokens)}`).join(' · ')}
             </Text>
           )}
           {snap.measuredAt !== 0 && snap.rateLimits.length === 0 && (
@@ -339,6 +359,28 @@ export const register: Register = on => {
           ))}
         </Box>
 
+        {contextRows.length > 0 && (
+          <Box flexDirection="column" borderStyle="round" borderColor={CYAN} paddingX={1}>
+            <Box justifyContent="space-between">
+              <Text bold color={CYAN}>
+                CONTEXT
+              </Text>
+              <Text dimColor>{`${ctx.tokens === undefined ? '?' : fmtCompact(ctx.tokens)} / ${fmtCompact(snap.windowTokens ?? ctx.window)}`}</Text>
+            </Box>
+            {contextRows}
+            {snap.counts !== undefined && Object.keys(snap.counts).length > 0 && (
+              <Text dimColor wrap="wrap">
+                {[
+                  snap.counts.mcp === undefined ? '' : `MCP tools ${snap.counts.mcp}`,
+                  snap.counts.memory === undefined ? '' : `memory files ${snap.counts.memory}`,
+                  snap.counts.agents === undefined ? '' : `agents ${snap.counts.agents}`,
+                ]
+                  .filter(part => part !== '')
+                  .join(' · ')}
+              </Text>
+            )}
+          </Box>
+        )}
         <Box flexDirection="column" borderStyle="round" borderColor={TEAL} paddingX={1}>
           <Box justifyContent="space-between">
             <Text bold color={TEAL}>
@@ -778,6 +820,8 @@ async function refreshUsage($: EngineInterface): Promise<void> {
   let autoCompact: DashAutoCompact | undefined = prev.autoCompact
   let model: string | undefined = prev.model
   let categories: DashUsage['categories'] = prev.categories
+  let windowTokens: number | undefined = prev.windowTokens
+  let counts: DashUsage['counts'] = prev.counts
   const wait = autoCompact === undefined ? BREAKDOWN_RETRY_MS : BREAKDOWN_EVERY_MS
   if (plain.context.window !== prev.context.window || now - breakdownAt >= wait) {
     breakdownAt = now
@@ -791,10 +835,14 @@ async function refreshUsage($: EngineInterface): Promise<void> {
       }
       model = breakdown.model
       categories = breakdown.categories
-        .filter(c => !c.isDeferred && !/free|buffer/i.test(c.name) && c.tokens > 0)
-        .sort((a, b) => b.tokens - a.tokens)
-        .slice(0, 4)
-        .map(c => ({ name: c.name, tokens: c.tokens }))
+        .filter(c => c.tokens > 0)
+        .map(c => ({ name: c.name, tokens: c.tokens, kind: c.kind }))
+      windowTokens = breakdown.rawMaxTokens
+      counts = {
+        ...(breakdown.memoryFiles.length > 0 ? { memory: breakdown.memoryFiles.length } : {}),
+        ...(breakdown.mcpTools.length > 0 ? { mcp: breakdown.mcpTools.length } : {}),
+        ...(breakdown.agents.length > 0 ? { agents: breakdown.agents.length } : {}),
+      }
     }
   }
   if (model === undefined) model = await attempt($, () => $.session.model(), undefined)
@@ -807,6 +855,8 @@ async function refreshUsage($: EngineInterface): Promise<void> {
     ...(model === undefined ? {} : { model }),
     ...(turns === undefined ? {} : { turns }),
     ...(categories === undefined ? {} : { categories }),
+    ...(windowTokens === undefined ? {} : { windowTokens }),
+    ...(counts === undefined ? {} : { counts }),
   }
   if (prev.measuredAt !== 0 && sameReading(prev, fresh)) return
   await update($, usage, () => fresh)
@@ -885,6 +935,7 @@ const ORANGE = '#c8582f'
 const INDIGO = '#4f56d9'
 const TEAL = '#0e8f84'
 const BLUE = '#2f6fe0'
+const CYAN = '#0b7285'
 
 function levelColor(percent: number): string {
   return percent >= 90 ? RED : percent >= 70 ? AMBER : GREEN

@@ -8,7 +8,11 @@ export type DashUsage = {
   costUsd?: number
   model?: string
   turns?: number
-  categories?: { name: string; tokens: number }[]
+  categories?: { name: string; tokens: number; kind: string }[]
+  /** the window the breakdown is measured against, in tokens */
+  windowTokens?: number
+  /** how many memory files, MCP tools and custom agents the breakdown lists */
+  counts?: { memory?: number; mcp?: number; agents?: number }
 }
 export type DashAgent = {
   id: string

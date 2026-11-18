@@ -6,14 +6,20 @@ English · [繁體中文](README.zh-TW.md)
 
 A resource monitor for Claude Code on desktop. It lives in a side pane and shows live usage, context, permissions and subagents without leaving the app. It only observes events: no model calls, zero tokens, and it never blocks or rewrites tool calls.
 
+### Mascot
+
+<table><tr><td align="center"><img src="docs/moods/idle.gif" width="150"><br><sub>Idle: sleeps, looks around, winks</sub></td><td align="center"><img src="docs/moods/laptop.gif" width="150"><br><sub>Takes out a laptop and types</sub></td><td align="center"><img src="docs/moods/read.gif" width="150"><br><sub>Reading</sub></td><td align="center"><img src="docs/moods/search.gif" width="150"><br><sub>Searching</sub></td></tr><tr><td align="center"><img src="docs/moods/coffee.gif" width="150"><br><sub>Coffee break</sub></td><td align="center"><img src="docs/moods/walk.gif" width="150"><br><sub>Pacing while thinking</sub></td><td align="center"><img src="docs/moods/bulb.gif" width="150"><br><sub>Idea</sub></td><td align="center"><img src="docs/moods/hop.gif" width="150"><br><sub>Hopping</sub></td></tr></table>
+
 ### Features
 
 - **Plan limits**: 5-hour and 7-day usage bars with reset countdowns.
 - **Session**: model, permission mode, effort, turn count, cost, uptime, context bar, auto-compact threshold and the largest context categories.
+- **Context breakdown**: every context category (messages, system tools, MCP tools, system prompt, skills, memory files, agents, auto-compact buffer, free space and deferred tools) with tokens and share of the window.
 - **Turn**: live turn timer, tool calls, edits, errors, last turn duration, session totals.
 - **Permissions**: allow / ask / deny counts, file / shell / other split, top tools.
 - **Subagents**: one card each with name, description, status, elapsed time, output tokens and model.
 - **Session log**: the last 12 events (tools, permissions, turns, subagents).
+- **Animated Claude mascot**: it sleeps and looks around when idle, and while Claude works it rotates through using a laptop, reading, searching, having coffee, pacing, getting ideas and hopping. Drawn as SVG on desktop. An unofficial fan drawing, not an Anthropic asset.
 - **Reopenable**: the `Usage ▸` button above the prompt brings the pane back after closing it.
 - Works in light and dark mode, text wraps in a narrow pane.
 
