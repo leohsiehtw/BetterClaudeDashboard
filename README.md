@@ -29,6 +29,10 @@ claude plugin install claudecode-dashboard@local-mods --scope user
 
 Then run `/reload-plugins`. Desktop surface is the target; other surfaces get the text fallback.
 
+### What the hooks do
+
+All hooks only observe and always pass the event through unchanged: `tool.check` records the allow / ask / deny verdict (it awaits the verdict and returns it as given), `tool.call` counts calls and errors, `turn.start` / `turn.complete` time turns and read subagent output tokens, `classic.*` events record permission mode, effort and permission dialogs, `session.*` start the refresh timer, and `ui.render` draws the pane and the `Usage ▸` button.
+
 ### Limits
 
 Not exposed by the API, so not shown: per-subagent context size, the classifier's real verdict, a request count (turn count is used instead). "Pending" counts asked calls that have not finished, including the tool's own run time.

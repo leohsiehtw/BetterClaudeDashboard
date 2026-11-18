@@ -29,6 +29,10 @@ claude plugin install claudecode-dashboard@local-mods --scope user
 
 之後執行 `/reload-plugins`。以桌面版為主，其他環境使用文字版吉祥物。
 
+### Hook 做了什麼
+
+所有 hook 都只觀察，並原封不動放行事件：`tool.check` 記錄允許 / 詢問 / 拒絕的判定（先取得判定結果再原樣回傳），`tool.call` 統計呼叫與錯誤，`turn.start` / `turn.complete` 計時回合並讀取 subagent 輸出 token，`classic.*` 事件記錄權限模式、effort 與權限彈窗，`session.*` 啟動更新計時器，`ui.render` 繪製面板和 `Usage ▸` 按鈕。
+
 ### 限制
 
 API 拿不到所以不顯示：每個 subagent 的 context 大小、分類器的真正判定、請求數（以回合數代替）。「等待」是判為詢問但尚未結束的呼叫數，包含工具本身執行的時間。

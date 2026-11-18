@@ -919,9 +919,9 @@ function pad(n: number): string {
 
 function fmtElapsed(ms: number): string {
   const s = Math.max(0, Math.floor(ms / 1000))
-  const h = Math.floor(s / 3600)
+  const hrs = Math.floor(s / 3600)
   const m = Math.floor((s % 3600) / 60)
-  if (h > 0) return `${h}h ${pad(m)}m`
+  if (hrs > 0) return `${hrs}hrs ${pad(m)}m`
   if (m > 0) return `${m}m ${pad(s % 60)}s`
 
   return `${s}s`
@@ -930,9 +930,9 @@ function fmtElapsed(ms: number): string {
 /** Minute granularity: the clock atom only ticks per minute while nothing runs. */
 function fmtUptime(ms: number): string {
   const min = Math.max(0, Math.floor(ms / 60_000))
-  const h = Math.floor(min / 60)
+  const hrs = Math.floor(min / 60)
 
-  return h > 0 ? `${h}h ${pad(min % 60)}m` : `${min}m`
+  return hrs > 0 ? `${hrs}hrs ${pad(min % 60)}m` : `${min}m`
 }
 
 function fmtClock(at: number): string {
@@ -944,9 +944,9 @@ function fmtClock(at: number): string {
 function fmtCountdown(ms: number): string {
   const min = Math.max(1, Math.ceil(ms / 60_000))
   const d = Math.floor(min / 1440)
-  const h = Math.floor((min % 1440) / 60)
-  if (d > 0) return `${d}d ${h}h`
-  if (h > 0) return `${h}h ${pad(min % 60)}m`
+  const hrs = Math.floor((min % 1440) / 60)
+  if (d > 0) return `${d}d ${hrs}hrs`
+  if (hrs > 0) return `${hrs}hrs ${pad(min % 60)}m`
 
   return `${min}m`
 }
