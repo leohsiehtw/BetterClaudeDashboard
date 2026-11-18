@@ -9,9 +9,9 @@ export function mascot(now: number, busy: boolean): string[] {
   return [' ▗▟█████▙▖', `▐█ ${eyes} █▌`, ` ▝▜█████▛▘`, `   ${legs}`]
 }
 
-export type Mood = 'idle' | 'laptop' | 'walk' | 'hop' | 'read' | 'search' | 'bulb' | 'coffee'
+export type Mood = 'idle' | 'laptop' | 'walk' | 'hop' | 'read' | 'search' | 'bulb' | 'coffee' | 'turn'
 
-export const MOODS: Mood[] = ['laptop', 'walk', 'hop', 'read', 'search', 'bulb', 'coffee']
+export const MOODS: Mood[] = ['turn', 'laptop', 'walk', 'hop', 'read', 'search', 'bulb', 'coffee']
 
 export function moodFor(now: number, busy: boolean): Mood {
   return busy ? (MOODS[Math.floor(now / 8000) % MOODS.length] ?? 'laptop') : 'idle'
@@ -24,7 +24,8 @@ export const MASCOT_SVG = (mood: Mood): string => {
   const C = '#d97757'
   const dots = `<rect class="d1" x="64" y="0" width="6" height="6" fill="${C}"/><rect class="d2" x="76" y="0" width="6" height="6" fill="${C}"/><rect class="d3" x="88" y="0" width="6" height="6" fill="${C}"/>`
   const css: Record<Mood, string> = {
-    idle: `.z1,.z2{animation:zz 4s steps(1,end) infinite;opacity:0}.z2{animation-delay:2s}
+    idle: `.wk{animation:wink 7s steps(1,end) infinite;transform-box:fill-box;transform-origin:center}@keyframes wink{0%,60%,100%{transform:scaleY(1)}62%,66%{transform:scaleY(.15)}}
+.z1,.z2{animation:zz 4s steps(1,end) infinite;opacity:0}.z2{animation-delay:2s}
 .look{animation:look 7s ease-in-out infinite}.hi{animation:hi 9s ease-in-out infinite}
 @keyframes zz{0%{opacity:0;transform:translate(0,0)}20%{opacity:1}60%{opacity:1;transform:translate(6px,-8px)}80%,100%{opacity:0;transform:translate(10px,-14px)}}
 @keyframes look{0%,40%{transform:translateX(0)}45%,60%{transform:translateX(-4px)}65%,85%{transform:translateX(4px)}90%,100%{transform:translateX(0)}}
@@ -49,6 +50,16 @@ export const MASCOT_SVG = (mood: Mood): string => {
     coffee: `.st1,.st2{animation:steam 1.6s steps(1,end) infinite}.st2{animation-delay:.8s}.nod{animation:nod 1.6s ease-in-out infinite}
 @keyframes steam{0%{transform:translateY(0);opacity:0}25%{transform:translateY(-3px);opacity:1}50%{transform:translateY(-7px);opacity:1}75%{transform:translateY(-11px);opacity:0}}
 @keyframes nod{0%{transform:translateY(0)}50%{transform:translateY(2px)}}`,
+    turn: `.ff{transform-box:fill-box;transform-origin:left;animation:ffk 6s ease-in-out infinite}
+.ey{animation:eyk 6s ease-in-out infinite}
+.ra{animation:rak 6s ease-in-out infinite}
+.lg{transform-box:fill-box;transform-origin:left;animation:ffk 6s ease-in-out infinite}
+.tool{animation:tlk 6s ease-in-out infinite}.tw{animation:tw .6s ease-in-out infinite}
+@keyframes ffk{0%,8%{transform:scaleX(1)}22%,72%{transform:scaleX(.6)}86%,100%{transform:scaleX(1)}}
+@keyframes eyk{0%,8%{transform:translateX(0)}22%,72%{transform:translateX(-10px)}86%,100%{transform:translateX(0)}}
+@keyframes rak{0%,8%{opacity:1}14%,78%{opacity:0}86%,100%{opacity:1}}
+@keyframes tlk{0%,18%{opacity:0}26%,68%{opacity:1}76%,100%{opacity:0}}
+@keyframes tw{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}`,
     read: `.pg{animation:pg 1.2s ease-in-out infinite}.nod{animation:nod 1.2s ease-in-out infinite}
 @keyframes pg{0%{transform:scaleX(1)}50%{transform:scaleX(.4)}}
 @keyframes nod{0%{transform:translateY(0)}50%{transform:translateY(2px)}}`,
@@ -61,6 +72,7 @@ export const MASCOT_SVG = (mood: Mood): string => {
 <rect class="k3" x="8" y="23" width="44" height="3" fill="#f5a524" style="transform-box:fill-box;transform-origin:left"/>
 <rect class="cur" x="52" y="28" width="4" height="5" fill="#fbf3ec"/><rect x="-6" y="40" width="76" height="6" fill="#9aa3b2"/></g>`,
     walk: '',
+    turn: '',
     hop: `<rect class="sp" x="14" y="10" width="5" height="5" fill="#f5a524"/><rect class="sp" x="168" y="16" width="5" height="5" fill="#5aa9ff"/><rect class="sp" x="150" y="4" width="4" height="4" fill="#2fb36b"/><rect class="sp" x="30" y="2" width="4" height="4" fill="#d63a3a"/>`,
     search: `<g class="mg"><g transform="translate(46,40)"><rect x="0" y="0" width="16" height="3" fill="#5aa9ff"/><rect x="0" y="13" width="16" height="3" fill="#5aa9ff"/><rect x="0" y="0" width="3" height="16" fill="#5aa9ff"/><rect x="13" y="0" width="3" height="16" fill="#5aa9ff"/><rect x="3" y="3" width="10" height="10" fill="#5aa9ff" opacity=".25"/><rect x="16" y="16" width="8" height="4" fill="#9aa3b2"/></g></g>`,
     bulb: `<g class="bl"><rect x="76" y="2" width="14" height="12" fill="#f5a524"/><rect x="79" y="14" width="8" height="3" fill="#9aa3b2"/></g><rect class="ry" x="70" y="4" width="3" height="3" fill="#f5a524"/><rect class="ry" x="93" y="4" width="3" height="3" fill="#f5a524"/><rect class="ry" x="82" y="-2" width="3" height="3" fill="#f5a524"/>`,
@@ -81,14 +93,22 @@ export const MASCOT_SVG = (mood: Mood): string => {
 @keyframes step{0%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @keyframes blink{0%,92%,100%{transform:scaleY(1)}94%,98%{transform:scaleY(0.15)}}
 ${css[mood]}
-</style><g transform="translate(${shift},12)"><g class="${outer}">${topMarks}<g class="b">
+</style><g transform="translate(${shift},12)"><g class="${outer}">${topMarks}${mood === 'turn' ? `<g class="b">
+<g class="ra">${rightArm}</g>
+<rect x="28" y="8" width="48" height="44" fill="#b4532f"/>
+<rect class="ff" x="28" y="8" width="48" height="44" fill="${C}"/>
+<rect x="12" y="24" width="16" height="12" fill="${C}"/>
+<g class="ey"><rect class="e" x="40" y="16" width="6" height="9" fill="#1a1a1a"/><rect class="e" x="58" y="16" width="6" height="9" fill="#1a1a1a"/></g>
+<g class="lg"><rect class="p1" x="30" y="52" width="6" height="14" fill="${C}"/><rect class="p2" x="42" y="52" width="6" height="14" fill="${C}"/><rect class="p2" x="58" y="52" width="6" height="14" fill="${C}"/><rect class="p1" x="70" y="52" width="6" height="14" fill="${C}"/></g>
+<g class="tool"><g class="tw"><rect x="2" y="64" width="5" height="3" fill="#9aa3b2"/><rect x="7" y="61" width="5" height="3" fill="#9aa3b2"/><rect x="12" y="58" width="5" height="3" fill="#9aa3b2"/><rect x="17" y="55" width="5" height="3" fill="#9aa3b2"/><rect x="22" y="52" width="5" height="3" fill="#9aa3b2"/></g></g>
+</g>` : `<g class="b">
 <g><rect class="a1" x="12" y="24" width="16" height="12" fill="${C}"/></g>
 ${rightArm}
 <rect x="28" y="8" width="48" height="44" fill="${C}"/>
-<g class="${head}"><rect class="e" x="40" y="16" width="6" height="9" fill="#1a1a1a"/><rect class="e" x="58" y="16" width="6" height="9" fill="#1a1a1a"/></g>
+<g class="${head}"><rect class="e" x="40" y="16" width="6" height="9" fill="#1a1a1a"/><rect class="${mood === 'idle' ? 'wk' : 'e'}" x="58" y="16" width="6" height="9" fill="#1a1a1a"/></g>
 <rect class="p1" x="30" y="52" width="6" height="14" fill="${C}"/><rect class="p2" x="42" y="52" width="6" height="14" fill="${C}"/>
 <rect class="p2" x="58" y="52" width="6" height="14" fill="${C}"/><rect class="p1" x="70" y="52" width="6" height="14" fill="${C}"/>
-</g></g></g>${extras[mood]}</svg>`
+</g>`}</g></g>${extras[mood]}</svg>`
 }
 
 export function spin(now: number): string {

@@ -10,7 +10,7 @@ Claude Code 桌面版的資源監視器。放在側邊面板，不離開 app 就
 
 ### 吉祥物
 
-<table><tr><td align="center"><img src="docs/moods/idle.gif" width="190"><br><sub>閒置：睡覺、東張西望、打招呼</sub></td><td align="center"><img src="docs/moods/laptop.gif" width="190"><br><sub>盯著筆電螢幕</sub></td><td align="center"><img src="docs/moods/walk.gif" width="190"><br><sub>邊走邊想</sub></td><td align="center"><img src="docs/moods/hop.gif" width="190"><br><sub>跳躍</sub></td></tr><tr><td align="center"><img src="docs/moods/read.gif" width="190"><br><sub>看書</sub></td><td align="center"><img src="docs/moods/search.gif" width="190"><br><sub>搜尋</sub></td><td align="center"><img src="docs/moods/bulb.gif" width="190"><br><sub>靈光一閃</sub></td><td align="center"><img src="docs/moods/coffee.gif" width="190"><br><sub>喝咖啡休息</sub></td></tr></table>
+<table><tr><td align="center"><img src="docs/moods/idle.gif" width="190"><br><sub>閒置：睡覺、東張西望、眨眼</sub></td><td align="center"><img src="docs/moods/turn.gif" width="190"><br><sub>轉身、拖著一條線</sub></td><td align="center"><img src="docs/moods/laptop.gif" width="190"><br><sub>盯著筆電螢幕</sub></td></tr><tr><td align="center"><img src="docs/moods/walk.gif" width="190"><br><sub>邊走邊想</sub></td><td align="center"><img src="docs/moods/hop.gif" width="190"><br><sub>跳躍</sub></td><td align="center"><img src="docs/moods/read.gif" width="190"><br><sub>看書</sub></td></tr><tr><td align="center"><img src="docs/moods/search.gif" width="190"><br><sub>搜尋</sub></td><td align="center"><img src="docs/moods/bulb.gif" width="190"><br><sub>靈光一閃</sub></td><td align="center"><img src="docs/moods/coffee.gif" width="190"><br><sub>喝咖啡休息</sub></td></tr></table>
 
 ### 功能
 
