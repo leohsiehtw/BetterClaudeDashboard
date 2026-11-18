@@ -36,8 +36,24 @@ function mascot(now: number, busy: boolean): string[] {
 const MASCOT_SVG = (busy: boolean): string => {
   const bob = busy ? '0.5s' : '2.4s'
   const step = busy ? '0.4s' : '1.6s'
+  const extra = busy
+    ? `.w{animation:walk 5s steps(1,end) infinite}
+.d1,.d2,.d3{animation:dot 1.2s steps(1,end) infinite}
+.d2{animation-delay:.4s}.d3{animation-delay:.8s}
+@keyframes walk{0%{transform:translateX(0)}20%{transform:translateX(-12px)}40%{transform:translateX(-24px)}50%{transform:translateX(-12px)}60%{transform:translateX(0)}70%{transform:translateX(12px)}85%{transform:translateX(24px)}95%{transform:translateX(12px)}}
+@keyframes dot{0%{opacity:.15}33%{opacity:1}66%{opacity:1}100%{opacity:.15}}`
+    : `.z1,.z2{animation:zz 4s steps(1,end) infinite;opacity:0}
+.z2{animation-delay:2s}
+.look{animation:look 7s steps(1,end) infinite}
+.hi{animation:hi 9s steps(1,end) infinite}
+@keyframes zz{0%{opacity:0;transform:translate(0,0)}20%{opacity:1}60%{opacity:1;transform:translate(6px,-8px)}80%,100%{opacity:0;transform:translate(10px,-14px)}}
+@keyframes look{0%,40%{transform:translateX(0)}45%,60%{transform:translateX(-4px)}65%,85%{transform:translateX(4px)}90%,100%{transform:translateX(0)}}
+@keyframes hi{0%,70%{transform:translateY(0)}72%,76%{transform:translateY(-10px)}78%,82%{transform:translateY(-4px)}84%,100%{transform:translateY(0)}}`
+  const marks = busy
+    ? `<rect class="d1" x="64" y="2" width="6" height="6" fill="#d97757"/><rect class="d2" x="76" y="2" width="6" height="6" fill="#d97757"/><rect class="d3" x="88" y="2" width="6" height="6" fill="#d97757"/>`
+    : `<text class="z1" x="108" y="22" font-size="14" font-family="monospace" font-weight="bold" fill="#9aa3b2">z</text><text class="z2" x="108" y="22" font-size="11" font-family="monospace" font-weight="bold" fill="#9aa3b2">z</text>`
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="120" height="80" shape-rendering="crispEdges"><style>
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 90" width="160" height="90" shape-rendering="crispEdges"><style>
 .b{animation:bob ${bob} steps(2,end) infinite}
 .p1{animation:step ${step} steps(1,end) infinite}
 .p2{animation:step ${step} steps(1,end) infinite reverse}
@@ -48,17 +64,18 @@ const MASCOT_SVG = (busy: boolean): string => {
 @keyframes step{0%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @keyframes blink{0%,92%,100%{transform:scaleY(1)}94%,98%{transform:scaleY(0.15)}}
 @keyframes wave{0%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-</style><g class="b">
-<rect class="a1" x="8" y="28" width="16" height="14" fill="#c8582f"/>
+${extra}
+</style><g transform="translate(20,12)"><g class="${busy ? 'w' : ''}">${marks}<g class="b">
+<g class="${busy ? '' : 'hi'}"><rect class="a1" x="8" y="28" width="16" height="14" fill="#c8582f"/></g>
 <rect class="a2" x="96" y="28" width="16" height="14" fill="#c8582f"/>
 <rect x="24" y="8" width="72" height="40" fill="#d97757"/>
-<rect class="e" x="40" y="20" width="8" height="14" fill="#1a1a1a"/>
-<rect class="e" x="72" y="20" width="8" height="14" fill="#1a1a1a"/>
+<g class="${busy ? '' : 'look'}"><rect class="e" x="40" y="20" width="8" height="14" fill="#1a1a1a"/>
+<rect class="e" x="72" y="20" width="8" height="14" fill="#1a1a1a"/></g>
 <rect class="p1" x="32" y="48" width="8" height="16" fill="#c8582f"/>
 <rect class="p2" x="48" y="48" width="8" height="16" fill="#c8582f"/>
 <rect class="p1" x="64" y="48" width="8" height="16" fill="#c8582f"/>
 <rect class="p2" x="80" y="48" width="8" height="16" fill="#c8582f"/>
-</g></svg>`
+</g></g></g></svg>`
 }
 
 function spin(now: number): string {
