@@ -128,7 +128,9 @@ export function spin(now: number): string {
 
 /** Optional local art: when hooks/mascot-video.ts holds SVG strings they replace the drawn mascot; the committed file holds empty strings. */
 export function mascotSvg(mood: Mood): string {
-  if (VIDEO_PLAY === '' || VIDEO_IDLE === '') return MASCOT_SVG(mood)
+  const play: string = VIDEO_PLAY
+  const idle: string = VIDEO_IDLE
+  if (play === '' || idle === '') return MASCOT_SVG(mood)
 
-  return mood === 'idle' ? VIDEO_IDLE : VIDEO_PLAY
+  return mood === 'idle' ? idle : play
 }
