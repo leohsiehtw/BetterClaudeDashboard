@@ -22,6 +22,11 @@ const TITLE = 'Usage'
 const DONE: readonly string[] = ['completed', 'failed', 'killed']
 const KEEP_FINISHED = 5
 const TICK_MS = 1_000
+const SPIN = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+
+function spin(now: number): string {
+  return SPIN[Math.floor(now / 1000) % SPIN.length]
+}
 const USAGE_EVERY_TICKS = 3
 const BREAKDOWN_EVERY_MS = 60_000
 const BREAKDOWN_RETRY_MS = 5_000
@@ -259,7 +264,7 @@ export const register: Register = on => {
       turn.startedAt === undefined
         ? 'no turn yet'
         : turnRunning
-          ? `running ${fmtElapsed(Math.max(0, now - turn.startedAt))}`
+          ? `${spin(now)} running ${fmtElapsed(Math.max(0, now - turn.startedAt))}`
           : 'idle'
     const c = act.checks
     const topTools = Object.entries(act.tools)
@@ -404,7 +409,7 @@ export const register: Register = on => {
                       : `${row.type} · ${row.description}`}
                   </Text>
                   <Text color={isLive ? AMBER : isBad ? RED : GREEN} wrap="wrap">
-                    {`${isLive ? '● ' : isBad ? '✗ ' : '✓ '}${fmtElapsed((row.endedAt ?? now) - row.startedAt)}`}
+                    {`${isLive ? `${spin(now)} ` : isBad ? '✗ ' : '✓ '}${fmtElapsed((row.endedAt ?? now) - row.startedAt)}`}
                     <Text dimColor>{` · ${row.status}`}</Text>
                   </Text>
                   {used !== undefined && (
