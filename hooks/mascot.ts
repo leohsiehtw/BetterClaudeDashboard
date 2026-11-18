@@ -50,16 +50,22 @@ export const MASCOT_SVG = (mood: Mood): string => {
     coffee: `.st1,.st2{animation:steam 1.6s steps(1,end) infinite}.st2{animation-delay:.8s}.nod{animation:nod 1.6s ease-in-out infinite}
 @keyframes steam{0%{transform:translateY(0);opacity:0}25%{transform:translateY(-3px);opacity:1}50%{transform:translateY(-7px);opacity:1}75%{transform:translateY(-11px);opacity:0}}
 @keyframes nod{0%{transform:translateY(0)}50%{transform:translateY(2px)}}`,
-    turn: `.ff{transform-box:fill-box;transform-origin:left;animation:ffk 6s ease-in-out infinite}
-.ey{animation:eyk 6s ease-in-out infinite}
-.ra{animation:rak 6s ease-in-out infinite}
-.lg{transform-box:fill-box;transform-origin:left;animation:ffk 6s ease-in-out infinite}
-.tool{animation:tlk 6s ease-in-out infinite}.tw{animation:tw .6s ease-in-out infinite}
-@keyframes ffk{0%,8%{transform:scaleX(1)}22%,72%{transform:scaleX(.6)}86%,100%{transform:scaleX(1)}}
-@keyframes eyk{0%,8%{transform:translateX(0)}22%,72%{transform:translateX(-10px)}86%,100%{transform:translateX(0)}}
-@keyframes rak{0%,8%{opacity:1}14%,78%{opacity:0}86%,100%{opacity:1}}
-@keyframes tlk{0%,18%{opacity:0}26%,68%{opacity:1}76%,100%{opacity:0}}
-@keyframes tw{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}`,
+    turn: `.ff,.lg{transform-box:fill-box;transform-origin:left;animation:ffk 6s ease-in-out infinite}
+.ey{animation:eyk 6s ease-in-out infinite}.ra{animation:rak 6s ease-in-out infinite}
+.la{transform-box:fill-box;transform-origin:right;animation:lak 6s ease-in-out infinite}
+.wk2{transform-box:fill-box;transform-origin:center;animation:wk2 6s steps(1,end) infinite}
+.cr{animation:crk 6s steps(1,end) infinite}.bl2{animation:blk 6s steps(1,end) infinite}.op{animation:opk 6s steps(1,end) infinite}
+.hd{animation:hdk 6s steps(1,end) infinite}.hdi{animation:tp .3s steps(1,end) infinite}
+@keyframes ffk{0%,32%{transform:scaleX(1)}40%,74%{transform:scaleX(.6)}84%,100%{transform:scaleX(1)}}
+@keyframes eyk{0%,32%{transform:translateX(0)}40%,74%{transform:translateX(-10px)}84%,100%{transform:translateX(0)}}
+@keyframes rak{0%,32%{opacity:1}36%,80%{opacity:0}86%,100%{opacity:1}}
+@keyframes lak{0%,6%{transform:none}10%,30%{transform:scaleX(.5)}36%{transform:scaleX(1)}42%,72%{transform:translateY(12px)}82%,100%{transform:none}}
+@keyframes wk2{0%,7%{transform:scaleY(1);fill:#1a1a1a}9%,15%{transform:scaleY(.2);fill:#7a2a12}17%,100%{transform:scaleY(1);fill:#1a1a1a}}
+@keyframes crk{0%,13%{opacity:0}14%,22%{opacity:1}24%,71%{opacity:0}72%,80%{opacity:1}82%,100%{opacity:0}}
+@keyframes blk{0%,23%{opacity:0}24%,31%{opacity:1}32%,100%{opacity:0}}
+@keyframes opk{0%,31%{opacity:0}32%,73%{opacity:1}74%,100%{opacity:0}}
+@keyframes hdk{0%,40%{opacity:0}42%,72%{opacity:1}74%,100%{opacity:0}}
+@keyframes tp{0%{transform:translateX(0)}50%{transform:translateX(-9px)}}`,
     read: `.pg{animation:pg 1.2s ease-in-out infinite}.nod{animation:nod 1.2s ease-in-out infinite}
 @keyframes pg{0%{transform:scaleX(1)}50%{transform:scaleX(.4)}}
 @keyframes nod{0%{transform:translateY(0)}50%{transform:translateY(2px)}}`,
@@ -97,10 +103,13 @@ ${css[mood]}
 <g class="ra">${rightArm}</g>
 <rect x="28" y="8" width="48" height="44" fill="#b4532f"/>
 <rect class="ff" x="28" y="8" width="48" height="44" fill="${C}"/>
-<rect x="12" y="24" width="16" height="12" fill="${C}"/>
-<g class="ey"><rect class="e" x="40" y="16" width="6" height="9" fill="#1a1a1a"/><rect class="e" x="58" y="16" width="6" height="9" fill="#1a1a1a"/></g>
+<rect class="la" x="12" y="24" width="16" height="12" fill="${C}"/>
+<g class="ey"><rect class="e" x="40" y="16" width="6" height="9" fill="#1a1a1a"/><rect class="wk2" x="58" y="16" width="6" height="9" fill="#1a1a1a"/></g>
 <g class="lg"><rect class="p1" x="30" y="52" width="6" height="14" fill="${C}"/><rect class="p2" x="42" y="52" width="6" height="14" fill="${C}"/><rect class="p2" x="58" y="52" width="6" height="14" fill="${C}"/><rect class="p1" x="70" y="52" width="6" height="14" fill="${C}"/></g>
-<g class="tool"><g class="tw"><rect x="2" y="64" width="5" height="3" fill="#9aa3b2"/><rect x="7" y="61" width="5" height="3" fill="#9aa3b2"/><rect x="12" y="58" width="5" height="3" fill="#9aa3b2"/><rect x="17" y="55" width="5" height="3" fill="#9aa3b2"/><rect x="22" y="52" width="5" height="3" fill="#9aa3b2"/></g></g>
+<g class="cr"><rect x="-10" y="0" width="2" height="9" fill="#8b9099"/><rect x="-10" y="9" width="8" height="2" fill="#8b9099"/></g>
+<g class="bl2"><rect x="-12" y="26" width="14" height="6" fill="#8b9099"/></g>
+<g class="op"><rect x="-8" y="42" width="3" height="4" fill="#8b9099"/><rect x="-5" y="46" width="3" height="4" fill="#8b9099"/><rect x="-2" y="50" width="3" height="4" fill="#8b9099"/><rect x="1" y="54" width="3" height="4" fill="#8b9099"/><rect x="4" y="58" width="3" height="4" fill="#8b9099"/><rect x="4" y="62" width="24" height="3" fill="#8b9099"/></g>
+<g class="hd"><g class="hdi"><rect x="20" y="56" width="6" height="6" fill="#b4532f"/></g></g>
 </g>` : `<g class="b">
 <g><rect class="a1" x="12" y="24" width="16" height="12" fill="${C}"/></g>
 ${rightArm}
