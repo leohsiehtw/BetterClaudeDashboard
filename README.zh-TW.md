@@ -1,4 +1,6 @@
-# ClaudeCode_Dashboard
+<p align="center"><img src="docs/icon.png" alt="ClaudeCode_Dashboard icon" width="96"></p>
+
+<h1 align="center">ClaudeCode_Dashboard</h1>
 
 [English](README.md) · 繁體中文
 
