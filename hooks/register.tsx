@@ -307,8 +307,8 @@ export const register: Register = on => {
     const swatches = [BLUE, ORANGE, TEAL, AMBER, INDIGO, RED, GREEN, TRACK]
     const used = cats.filter(c => c.kind === 'used').sort((x, y) => y.tokens - x.tokens)
     const rest = cats.filter(c => c.kind !== 'used')
-    const COLS = 20
-    const ROWS = 5
+    const COLS = 24
+    const ROWS = 2
     const cellsTotal = COLS * ROWS
     const gridCells: { color: string; filled: boolean }[] = []
     const addCells = (n: number, color: string, filled: boolean): void => {
@@ -322,17 +322,27 @@ export const register: Register = on => {
       .filter(c => c.kind === 'buffer')
       .forEach(c => addCells(Math.max(1, Math.round((c.tokens / Math.max(win, 1)) * cellsTotal)), AMBER, true))
     while (gridCells.length < cellsTotal) gridCells.push({ color: TRACK, filled: false })
+    // One Text per run of same-coloured cells (about ten nodes in all) rather than one per cell.
     const contextBar = (
       <Box flexDirection="column">
-        {Array.from({ length: ROWS }, (_, r) => (
-          <Text key={String(r)}>
-            {gridCells.slice(r * COLS, (r + 1) * COLS).map((cell, i) => (
-              <Text key={String(i)} color={cell.color}>
-                {cell.filled ? '■' : '□'}
-              </Text>
-            ))}
-          </Text>
-        ))}
+        {Array.from({ length: ROWS }, (_, r) => {
+          const runs: { color: string; filled: boolean; n: number }[] = []
+          for (const cell of gridCells.slice(r * COLS, (r + 1) * COLS)) {
+            const last = runs[runs.length - 1]
+            if (last !== undefined && last.color === cell.color && last.filled === cell.filled) last.n += 1
+            else runs.push({ color: cell.color, filled: cell.filled, n: 1 })
+          }
+
+          return (
+            <Text key={String(r)}>
+              {runs.map((run, i) => (
+                <Text key={String(i)} color={run.color}>
+                  {(run.filled ? '█' : '░').repeat(run.n)}
+                </Text>
+              ))}
+            </Text>
+          )
+        })}
         <Text bold>{`${ctxPct}% used`}</Text>
       </Box>
     )
