@@ -9,9 +9,9 @@ export function mascot(now: number, busy: boolean): string[] {
   return [' ▗▟█████▙▖', `▐█ ${eyes} █▌`, ` ▝▜█████▛▘`, `   ${legs}`]
 }
 
-export type Mood = 'idle' | 'laptop' | 'walk' | 'hop' | 'read'
+export type Mood = 'idle' | 'laptop' | 'walk' | 'hop' | 'read' | 'search' | 'bulb' | 'coffee'
 
-export const MOODS: Mood[] = ['laptop', 'walk', 'hop', 'read']
+export const MOODS: Mood[] = ['laptop', 'walk', 'hop', 'read', 'search', 'bulb', 'coffee']
 
 export function moodFor(now: number, busy: boolean): Mood {
   return busy ? (MOODS[Math.floor(now / 8000) % MOODS.length] ?? 'laptop') : 'idle'
@@ -41,6 +41,15 @@ export const MASCOT_SVG = (mood: Mood): string => {
     hop: `.w{animation:hop 1s steps(1,end) infinite}.sp{animation:sp 1s steps(1,end) infinite}
 @keyframes hop{0%{transform:translateY(0)}25%{transform:translateY(-10px)}50%{transform:translateY(-14px)}75%{transform:translateY(-6px)}}
 @keyframes sp{0%{opacity:0}30%{opacity:1}70%{opacity:1}100%{opacity:0}}`,
+    search: `.mg{animation:mg 3s steps(1,end) infinite}.look2{animation:l2 3s steps(1,end) infinite}
+@keyframes mg{0%{transform:translateX(0)}25%{transform:translateX(20px)}50%{transform:translateX(40px)}75%{transform:translateX(20px)}}
+@keyframes l2{0%{transform:translateX(-3px)}25%{transform:translateX(0)}50%{transform:translateX(3px)}75%{transform:translateX(0)}}`,
+    bulb: `.bl{animation:glow 1s steps(1,end) infinite}.ry{animation:ray 1s steps(1,end) infinite}
+@keyframes glow{0%{opacity:.35}50%{opacity:1}}
+@keyframes ray{0%{opacity:0}50%{opacity:1}}`,
+    coffee: `.st1,.st2{animation:steam 1.6s steps(1,end) infinite}.st2{animation-delay:.8s}.nod{animation:nod 1.6s steps(1,end) infinite}
+@keyframes steam{0%{transform:translateY(0);opacity:0}25%{transform:translateY(-3px);opacity:1}50%{transform:translateY(-7px);opacity:1}75%{transform:translateY(-11px);opacity:0}}
+@keyframes nod{0%{transform:translateY(0)}50%{transform:translateY(2px)}}`,
     read: `.pg{animation:pg 1.2s steps(1,end) infinite}.nod{animation:nod 1.2s steps(1,end) infinite}
 @keyframes pg{0%{transform:scaleX(1)}50%{transform:scaleX(.4)}}
 @keyframes nod{0%{transform:translateY(0)}50%{transform:translateY(2px)}}`,
@@ -54,6 +63,9 @@ export const MASCOT_SVG = (mood: Mood): string => {
 <rect class="cur" x="52" y="28" width="4" height="5" fill="#fbf3ec"/><rect x="-6" y="40" width="76" height="6" fill="#9aa3b2"/></g><rect x="102" y="52" width="24" height="9" fill="#d97757"/><rect class="tap" x="122" y="52" width="12" height="13" fill="#d97757"/>`,
     walk: '',
     hop: `<rect class="sp" x="14" y="10" width="5" height="5" fill="#f5a524"/><rect class="sp" x="168" y="16" width="5" height="5" fill="#5aa9ff"/><rect class="sp" x="150" y="4" width="4" height="4" fill="#2fb36b"/><rect class="sp" x="30" y="2" width="4" height="4" fill="#d63a3a"/>`,
+    search: `<g class="mg"><g transform="translate(46,40)"><rect x="0" y="0" width="16" height="3" fill="#5aa9ff"/><rect x="0" y="13" width="16" height="3" fill="#5aa9ff"/><rect x="0" y="0" width="3" height="16" fill="#5aa9ff"/><rect x="13" y="0" width="3" height="16" fill="#5aa9ff"/><rect x="3" y="3" width="10" height="10" fill="#5aa9ff" opacity=".25"/><rect x="16" y="16" width="8" height="4" fill="#9aa3b2"/></g></g>`,
+    bulb: `<g class="bl"><rect x="76" y="2" width="14" height="12" fill="#f5a524"/><rect x="79" y="14" width="8" height="3" fill="#9aa3b2"/></g><rect class="ry" x="70" y="4" width="3" height="3" fill="#f5a524"/><rect class="ry" x="93" y="4" width="3" height="3" fill="#f5a524"/><rect class="ry" x="82" y="-2" width="3" height="3" fill="#f5a524"/>`,
+    coffee: `<g transform="translate(112,50)"><rect x="0" y="0" width="16" height="16" fill="#fbf3ec"/><rect x="16" y="4" width="5" height="8" fill="none" stroke="#fbf3ec" stroke-width="2"/><rect x="2" y="2" width="12" height="4" fill="#7a4a2b"/></g><rect class="st1" x="116" y="42" width="3" height="5" fill="#9aa3b2"/><rect class="st2" x="123" y="42" width="3" height="5" fill="#9aa3b2"/>`,
     read: `<g transform="translate(60,50)"><rect x="0" y="0" width="32" height="22" fill="#fbf3ec"/><rect x="15" y="0" width="2" height="22" fill="#9aa3b2"/><rect class="pg" x="17" y="0" width="15" height="22" fill="#e9dfd3" style="transform-box:fill-box;transform-origin:left"/><rect x="4" y="5" width="9" height="2" fill="#9aa3b2"/><rect x="4" y="10" width="9" height="2" fill="#9aa3b2"/><rect x="4" y="15" width="9" height="2" fill="#9aa3b2"/></g>`,
   }
   const rightArm =
@@ -63,7 +75,7 @@ export const MASCOT_SVG = (mood: Mood): string => {
   const shift = mood === 'laptop' ? 6 : 33
   const topMarks = mood === 'walk' ? dots : ''
   const outer = mood === 'walk' || mood === 'hop' ? 'w' : ''
-  const head = mood === 'read' ? 'nod' : mood === 'idle' ? 'look' : ''
+  const head = mood === 'read' || mood === 'coffee' ? 'nod' : mood === 'idle' ? 'look' : mood === 'search' ? 'look2' : ''
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 90" width="190" height="90" shape-rendering="crispEdges"><style>
 .b{animation:bob ${bob} steps(2,end) infinite}

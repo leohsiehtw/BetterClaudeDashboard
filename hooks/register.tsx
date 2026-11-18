@@ -632,6 +632,8 @@ function noteMode($: EngineInterface, mode: string | undefined, effort: string |
 }
 
 /** A short, non-sensitive label: a file's basename or a command's first word, never the input itself. */
+const SUBCOMMAND: readonly string[] = ['git', 'npm', 'pnpm', 'yarn', 'docker', 'gh', 'pip', 'claude', 'cargo', 'go']
+
 function toolLabel(tool: string, input: unknown): string {
   const args = (typeof input === 'object' && input !== null ? input : {}) as Record<string, unknown>
   const str = (key: string): string | undefined => {
@@ -640,9 +642,15 @@ function toolLabel(tool: string, input: unknown): string {
     return typeof v === 'string' && v !== '' ? v : undefined
   }
   if (SHELL_TOOLS.includes(tool)) {
-    const first = (str('command') ?? '').trim().split(/\s+/)[0] ?? ''
+    const parts = (str('command') ?? '')
+      .split(/&&|\|\||;|\|/)
+      .map(part => part.trim().split(/\s+/))
+      .filter(words => (words[0] ?? '') !== '')
+    const main = parts.find(words => words[0] !== 'cd') ?? parts[0] ?? []
+    const first = baseName(main[0] ?? '')
+    const second = main[1] !== undefined && SUBCOMMAND.includes(first) ? ` ${main[1]}` : ''
 
-    return clip(baseName(first), 18)
+    return clip(`${first}${second}`, 20)
   }
   const path = str('file_path') ?? str('notebook_path') ?? str('path')
 
