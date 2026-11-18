@@ -4,7 +4,7 @@
 
 ## English
 
-<p align="center"><img src="docs/screenshot.png" alt="ClaudeCode_Dashboard" width="280"></p>
+<p align="center"><img src="docs/screenshot.png" alt="Idle" width="200"> <img src="docs/mood-hop.png" alt="Hopping while working" width="200"> <img src="docs/mood-laptop.png" alt="Typing on a laptop while working" width="200"></p>
 
 A resource monitor for Claude Code on desktop. It lives in a side pane and shows live usage, context, permissions and subagents without leaving the app. It only observes events: no model calls, zero tokens, and it never blocks or rewrites tool calls.
 
@@ -37,7 +37,7 @@ Not exposed by the API, so not shown: per-subagent context size, the classifier'
 
 ## 繁體中文
 
-<p align="center"><img src="docs/screenshot.png" alt="ClaudeCode_Dashboard" width="280"></p>
+<p align="center"><img src="docs/screenshot.png" alt="Idle" width="200"> <img src="docs/mood-hop.png" alt="Hopping while working" width="200"> <img src="docs/mood-laptop.png" alt="Typing on a laptop while working" width="200"></p>
 
 Claude Code 桌面版的資源監視器。放在側邊面板，不離開 app 就能即時看用量、context、權限和 subagent。只觀察事件：不呼叫模型、不耗 token，也不阻擋或改寫工具呼叫。
 
