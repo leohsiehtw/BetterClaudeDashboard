@@ -52,3 +52,13 @@ test('a card folds when its arrow is pressed and opens again', async $ => {
   expect(await ui.find({ type: 'Text', text: /^last turn/ })).toBeTruthy()
   await ui.unmount()
 })
+
+test('a card is picked up by its handle and dropped by another handle', async $ => {
+  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  expect(await ui.find({ type: 'Text', text: /moving/ })).toBeFalsy()
+  await ui.press({ plugin: 'better-claude-dashboard', key: 'turn-grip' })
+  expect(await ui.find({ type: 'Text', text: /moving turn/ })).toBeTruthy()
+  await ui.press({ plugin: 'better-claude-dashboard', key: 'log-grip' })
+  expect(await ui.find({ type: 'Text', text: /moving/ })).toBeFalsy()
+  await ui.unmount()
+})

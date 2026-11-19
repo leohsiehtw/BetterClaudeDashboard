@@ -69,7 +69,7 @@ const activity = atom({ plugin: 'better-claude-dashboard', key: 'activity' } as 
   shape: 'activity-1',
 })
 const layoutAtom = atom({ plugin: 'better-claude-dashboard', key: 'layout' } as const, { order: [], collapsed: [] } as DashLayout, {
-  shape: 'layout-1',
+  shape: 'layout-2',
 })
 const eventLog = atom({ plugin: 'better-claude-dashboard', key: 'log' } as const, [], {
   shape: 'log-1',
@@ -225,17 +225,16 @@ export const register: Register = on => {
       void update($, layoutAtom, cur => ({
         order: normalizeOrder(cur.order),
         collapsed: cur.collapsed.includes(id) ? cur.collapsed.filter(x => x !== id) : [...cur.collapsed, id],
+        ...(cur.lifting === undefined ? {} : { lifting: cur.lifting }),
       }))
-    const moveCard = (id: string, delta: number): void =>
+    const gripCard = (id: string): void =>
       void update($, layoutAtom, cur => {
         const next = normalizeOrder(cur.order)
-        const i = next.indexOf(id)
-        const j = i + delta
-        const other = next[j]
-        const mine = next[i]
-        if (i >= 0 && other !== undefined && mine !== undefined) {
-          next[i] = other
-          next[j] = mine
+        const lifted = cur.lifting
+        if (lifted === undefined) return { order: next, collapsed: cur.collapsed, lifting: id }
+        if (lifted !== id) {
+          next.splice(next.indexOf(lifted), 1)
+          next.splice(next.indexOf(id), 0, lifted)
         }
 
         return { order: next, collapsed: cur.collapsed }
@@ -310,40 +309,45 @@ export const register: Register = on => {
     const COLS = 24
     const ROWS = 2
     const cellsTotal = COLS * ROWS
-    const gridCells: { color: string; filled: boolean }[] = []
-    const addCells = (n: number, color: string, filled: boolean): void => {
-      for (let i = 0; i < n && gridCells.length < cellsTotal; i += 1) gridCells.push({ color, filled })
-    }
+    const usedTokens = used.reduce((sum, c) => sum + c.tokens, 0)
+    const bufferTokens = rest.filter(c => c.kind === 'buffer').reduce((sum, c) => sum + c.tokens, 0)
+    const gridCells: { color: string; glyph: string }[] = []
+    let running = 0
     used.forEach((c, n) => {
-      const cells = win > 0 ? Math.max(c.tokens > 0 ? 1 : 0, Math.round((c.tokens / win) * cellsTotal)) : 0
-      addCells(cells, swatches[n % swatches.length] ?? TRACK, true)
+      running += c.tokens
+      const end = win > 0 ? Math.round((running / win) * cellsTotal) : 0
+      while (gridCells.length < Math.min(end, cellsTotal)) {
+        gridCells.push({ color: swatches[n % swatches.length] ?? TRACK, glyph: '█' })
+      }
     })
-    rest
-      .filter(c => c.kind === 'buffer')
-      .forEach(c => addCells(Math.max(1, Math.round((c.tokens / Math.max(win, 1)) * cellsTotal)), AMBER, true))
-    while (gridCells.length < cellsTotal) gridCells.push({ color: TRACK, filled: false })
-    // One Text per run of same-coloured cells (about ten nodes in all) rather than one per cell.
+    const bufferCells = win > 0 ? Math.round((bufferTokens / win) * cellsTotal) : 0
+    while (gridCells.length < cellsTotal - bufferCells) gridCells.push({ color: TRACK, glyph: '░' })
+    while (gridCells.length < cellsTotal) gridCells.push({ color: AMBER, glyph: '▒' })
+    const totalPct = win > 0 ? Math.round((usedTokens / win) * 100) : ctxPct
+    // One Text per run of same cells (about ten nodes in all) rather than one per cell.
     const contextBar = (
       <Box flexDirection="column">
+        <Text bold color={levelColor(totalPct)} wrap="wrap">
+          {`${fmtCompact(usedTokens)} / ${fmtCompact(win)} · ${totalPct}% used`}
+        </Text>
         {Array.from({ length: ROWS }, (_, r) => {
-          const runs: { color: string; filled: boolean; n: number }[] = []
+          const runs: { color: string; glyph: string; n: number }[] = []
           for (const cell of gridCells.slice(r * COLS, (r + 1) * COLS)) {
             const last = runs[runs.length - 1]
-            if (last !== undefined && last.color === cell.color && last.filled === cell.filled) last.n += 1
-            else runs.push({ color: cell.color, filled: cell.filled, n: 1 })
+            if (last !== undefined && last.color === cell.color && last.glyph === cell.glyph) last.n += 1
+            else runs.push({ color: cell.color, glyph: cell.glyph, n: 1 })
           }
 
           return (
             <Text key={String(r)}>
               {runs.map((run, i) => (
                 <Text key={String(i)} color={run.color}>
-                  {(run.filled ? '█' : '░').repeat(run.n)}
+                  {run.glyph.repeat(run.n)}
                 </Text>
               ))}
             </Text>
           )
         })}
-        <Text bold>{`${ctxPct}% used`}</Text>
       </Box>
     )
     const contextRows = [
@@ -383,16 +387,11 @@ export const register: Register = on => {
             <Box>
               {hint}
               {hint !== null && <Text> </Text>}
-              {at > 0 && (
-                <Button key={`${id}-up`} onPress={() => moveCard(id, -1)}>
-                  <Text dimColor>{' ↑ '}</Text>
-                </Button>
-              )}
-              {at < order.length - 1 && (
-                <Button key={`${id}-down`} onPress={() => moveCard(id, 1)}>
-                  <Text dimColor>{' ↓ '}</Text>
-                </Button>
-              )}
+              <Button key={`${id}-grip`} onPress={() => gripCard(id)}>
+                <Text color={layout.lifting === id ? color : undefined} dimColor={layout.lifting !== id} bold={layout.lifting === id}>
+                  {' ⠿ '}
+                </Text>
+              </Button>
             </Box>
           </Box>
           {!isFolded && body}
@@ -453,7 +452,7 @@ export const register: Register = on => {
               'context',
               'CONTEXT',
               CYAN,
-              <Text dimColor>{`${ctx.tokens === undefined ? '?' : fmtCompact(ctx.tokens)} / ${fmtCompact(snap.windowTokens ?? ctx.window)}`}</Text>,
+              null,
               <Box flexDirection="column">
                 {contextBar}
                 {contextRows}
@@ -591,6 +590,9 @@ export const register: Register = on => {
           <Box flexDirection="column" alignItems="center">
             {art}
           </Box>
+        )}
+        {layout.lifting !== undefined && (
+          <Text dimColor wrap="wrap">{`⠿ moving ${layout.lifting}: press another card's ⠿ to drop it there, the same one to cancel`}</Text>
         )}
         {order.map(id => cards[id] ?? null)}
       </Box>
