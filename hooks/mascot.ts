@@ -11,8 +11,11 @@ export const MOODS: Mood[] = ['laptop', 'read', 'search', 'coffee', 'walk', 'bul
 /** Moods that turn to a side view (a darker side face appears, the far arm hides). */
 const PROFILE: readonly Mood[] = ['laptop', 'read', 'search', 'coffee', 'walk']
 
+/** How long one mood plays before the next: two whole 6 s stories. */
+export const MOOD_MS = 12_000
+
 export function moodFor(now: number, busy: boolean): Mood {
-  return busy ? (MOODS[Math.floor(now / 8000) % MOODS.length] ?? 'laptop') : 'idle'
+  return busy ? (MOODS[Math.floor(now / MOOD_MS) % MOODS.length] ?? 'laptop') : 'idle'
 }
 
 // One drawing unit is one "pixel" of the sprite: the body is 23 wide and 18 tall, the legs 4 tall.
@@ -56,7 +59,7 @@ const WINKCSS = `.wk2{transform-box:fill-box;transform-origin:center;animation:w
 
 const PROPS: Record<Mood, { css: string; inside: string; above: string }> = {
   idle: {
-    css: `.z1,.z2{animation:zz 4s steps(1,end) infinite;opacity:0}.z2{animation-delay:2s}.look{animation:look 7s steps(1,end) infinite}
+    css: `.z1,.z2{animation:zz 4s steps(1,end) infinite;opacity:0}.z2{animation-delay:calc(2s - var(--t,0s))!important}.look{animation:look 7s steps(1,end) infinite}
 @keyframes zz{0%{opacity:0;transform:translate(0,0)}20%{opacity:1}60%{opacity:1;transform:translate(2px,-3px)}80%,100%{opacity:0;transform:translate(3px,-5px)}}
 @keyframes look{0%,40%{transform:translateX(0)}45%,60%{transform:translateX(-1px)}65%,85%{transform:translateX(1px)}90%,100%{transform:translateX(0)}}`,
     inside: '',
@@ -89,7 +92,7 @@ const PROPS: Record<Mood, { css: string; inside: string; above: string }> = {
     above: '',
   },
   coffee: {
-    css: `.sp1,.sp2{animation:st 1.6s steps(1,end) infinite}.sp2{animation-delay:.8s}.sip{animation:sip 3s steps(1,end) infinite}
+    css: `.sp1,.sp2{animation:st 1.6s steps(1,end) infinite}.sp2{animation-delay:calc(.8s - var(--t,0s))!important}.sip{animation:sip 3s steps(1,end) infinite}
 @keyframes st{0%{transform:translateY(0);opacity:0}25%{transform:translateY(-1px);opacity:1}50%{transform:translateY(-2px);opacity:1}75%{transform:translateY(-3px);opacity:0}}
 @keyframes sip{0%{transform:translateY(0)}50%{transform:translateY(-4px)}}`,
     inside:
@@ -100,7 +103,7 @@ const PROPS: Record<Mood, { css: string; inside: string; above: string }> = {
   },
   walk: {
     css: `.gr{animation:gr .5s linear infinite}@keyframes gr{0%{transform:translateX(0)}100%{transform:translateX(-8px)}}
-.d1,.d2,.d3{animation:dt 1.2s steps(1,end) infinite}.d2{animation-delay:.4s}.d3{animation-delay:.8s}@keyframes dt{0%{opacity:.15}33%,66%{opacity:1}100%{opacity:.15}}`,
+.d1,.d2,.d3{animation:dt 1.2s steps(1,end) infinite}.d2{animation-delay:calc(.4s - var(--t,0s))!important}.d3{animation-delay:calc(.8s - var(--t,0s))!important}@keyframes dt{0%{opacity:.15}33%,66%{opacity:1}100%{opacity:.15}}`,
     inside:
       `<g class="t3"><g class="gr">${[-12, -4, 4, 12, 20, 28, 36, 44].map(x => rect(x, 22, 4, 1, SH)).join('')}</g></g>` +
       `<g class="t4">${rect(8, -4, 3, 3, C, 'd1')}${rect(13, -4, 3, 3, C, 'd2')}${rect(18, -4, 3, 3, C, 'd3')}</g>`,
@@ -123,7 +126,7 @@ const PROPS: Record<Mood, { css: string; inside: string; above: string }> = {
   },
 }
 
-export const MASCOT_SVG = (mood: Mood): string => {
+export const MASCOT_SVG = (mood: Mood, phase = 0): string => {
   const busy = mood !== 'idle'
   const profile = PROFILE.includes(mood)
   const bob = busy ? '0.5s' : '2.4s'
@@ -138,7 +141,8 @@ export const MASCOT_SVG = (mood: Mood): string => {
       `<g class="${mood === 'idle' ? 'look' : ''}">${eyeL}${eyeR}</g>${legs}`
   const props = PROPS[mood]
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 37" width="216" height="148" shape-rendering="crispEdges"><style>
+  return `<svg xmlns="http://www.w3.org/2000/svg" style="--t:${phase}s" viewBox="0 0 54 37" width="216" height="148" shape-rendering="crispEdges"><style>
+*{animation-delay:calc(var(--t,0s) * -1)!important}
 .b{animation:bob ${bob} steps(2,end) infinite}.p1{animation:step ${step} steps(1,end) infinite}.p2{animation:step ${step} steps(1,end) infinite reverse}
 .e{animation:blink 3.6s steps(1,end) infinite;transform-box:fill-box;transform-origin:center}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-${busy ? 1 : 0}px)}}

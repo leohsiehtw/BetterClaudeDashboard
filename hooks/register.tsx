@@ -17,7 +17,7 @@ import type {
   DashUsage,
   DashWindow,
 } from '../types'
-import { MASCOT_SVG, moodFor, spin } from './mascot'
+import { MASCOT_SVG, MOOD_MS, moodFor, spin } from './mascot'
 
 const PANE = 'better-claude-dashboard'
 const CARD_IDS = ['session', 'context', 'turn', 'permissions', 'agents', 'log']
@@ -360,7 +360,7 @@ export const register: Register = on => {
         <Text dimColor>{c.kind === 'deferred' ? fmtCompact(c.tokens) : `${fmtCompact(c.tokens)} ${share(c.tokens)}`}</Text>
       </Box>
     ))
-    const artSource = MASCOT_SVG(moodFor(now, isBusy))
+    const artSource = MASCOT_SVG(moodFor(now, isBusy), Math.floor((now % MOOD_MS) / 1000))
     const art =
       e.surface === 'desktop'
         ? (() => {

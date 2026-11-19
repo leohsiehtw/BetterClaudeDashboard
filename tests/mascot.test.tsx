@@ -4,7 +4,7 @@ import { MASCOT_SVG, MOODS, moodFor, spin } from '../hooks/mascot'
 
 test('idle stays idle and busy rotates through every mood', async () => {
   expect(moodFor(123_456, false)).toBe('idle')
-  expect(new Set(MOODS.map((_, i) => moodFor(i * 8000, true))).size).toBe(MOODS.length)
+  expect(new Set(MOODS.map((_, i) => moodFor(i * 12000, true))).size).toBe(MOODS.length)
 })
 
 test('every mood is a well-formed SVG under the size limit', async () => {
