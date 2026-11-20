@@ -4,7 +4,7 @@
 
 <p align="center">給 Claude 桌面版用的 Claude Code 儀表板與用量監視器。</p>
 
-[![License: MIT](https://img.shields.io/github/license/leohsiehtw/BetterClaudeDashboard)](LICENSE)
+[![License: MIT](https://img.shields.io/github/license/leohsiehtw/better-claude-dashboard)](LICENSE)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](#安裝)
 [![Languages](https://img.shields.io/badge/languages-5-blue)](#語言)
 
@@ -41,13 +41,13 @@ BetterClaudeDashboard 是一個 Claude Code 儀表板（dashboard）：這個 Cl
 外掛名稱：`better-claude-dashboard`。
 
 ```
-claude plugin marketplace add leohsiehtw/BetterClaudeDashboard
+claude plugin marketplace add leohsiehtw/better-claude-dashboard
 claude plugin install better-claude-dashboard@local-mods --scope user
 ```
 
 之後執行 `/reload-plugins`。以桌面版為主。
 
-在桌面版：點輸入框旁的 +，選 Plugins，Add marketplace `leohsiehtw/BetterClaudeDashboard`，再 Add plugin。
+在桌面版：點輸入框旁的 +，選 Plugins，Add marketplace `leohsiehtw/better-claude-dashboard`，再 Add plugin。
 
 ## Hook 做了什麼
 

@@ -4,7 +4,7 @@
 
 <p align="center">Claude デスクトップアプリ向けの Claude Code ダッシュボードと使用量モニター。</p>
 
-[![License: MIT](https://img.shields.io/github/license/leohsiehtw/BetterClaudeDashboard)](LICENSE)
+[![License: MIT](https://img.shields.io/github/license/leohsiehtw/better-claude-dashboard)](LICENSE)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](#インストール)
 [![Languages](https://img.shields.io/badge/languages-5-blue)](#言語)
 
@@ -41,13 +41,13 @@ BetterClaudeDashboard は Claude Code ダッシュボード（dashboard）です
 プラグイン名: `better-claude-dashboard`。
 
 ```
-claude plugin marketplace add leohsiehtw/BetterClaudeDashboard
+claude plugin marketplace add leohsiehtw/better-claude-dashboard
 claude plugin install better-claude-dashboard@local-mods --scope user
 ```
 
 その後 `/reload-plugins` を実行します。対象はデスクトップアプリです。
 
-デスクトップアプリでは、入力欄の横の + をクリックし、Plugins を選び、Add marketplace に `leohsiehtw/BetterClaudeDashboard` を指定して Add plugin します。
+デスクトップアプリでは、入力欄の横の + をクリックし、Plugins を選び、Add marketplace に `leohsiehtw/better-claude-dashboard` を指定して Add plugin します。
 
 ## フックの動作
 

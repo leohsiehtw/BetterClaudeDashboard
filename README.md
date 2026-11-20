@@ -4,7 +4,7 @@
 
 <p align="center">A Claude Code dashboard and usage monitor for the Claude desktop app.</p>
 
-[![License: MIT](https://img.shields.io/github/license/leohsiehtw/BetterClaudeDashboard)](LICENSE)
+[![License: MIT](https://img.shields.io/github/license/leohsiehtw/better-claude-dashboard)](LICENSE)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](#install)
 [![Languages](https://img.shields.io/badge/languages-5-blue)](#languages)
 
@@ -41,13 +41,13 @@ The pane is available in English, 繁體中文, 简体中文, 日本語 and 한�
 Plugin name: `better-claude-dashboard`.
 
 ```
-claude plugin marketplace add leohsiehtw/BetterClaudeDashboard
+claude plugin marketplace add leohsiehtw/better-claude-dashboard
 claude plugin install better-claude-dashboard@local-mods --scope user
 ```
 
 Then run `/reload-plugins`. Desktop is the target surface.
 
-In the desktop app: click + next to the prompt box, choose Plugins, Add marketplace `leohsiehtw/BetterClaudeDashboard`, then Add plugin.
+In the desktop app: click + next to the prompt box, choose Plugins, Add marketplace `leohsiehtw/better-claude-dashboard`, then Add plugin.
 
 ## What the hooks do
 

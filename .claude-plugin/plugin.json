@@ -7,8 +7,8 @@
   },
   "license": "MIT",
   "icon": ".claude-plugin/icon.png",
-  "homepage": "https://github.com/leohsiehtw/BetterClaudeDashboard",
-  "repository": "https://github.com/leohsiehtw/BetterClaudeDashboard",
+  "homepage": "https://github.com/leohsiehtw/better-claude-dashboard",
+  "repository": "https://github.com/leohsiehtw/better-claude-dashboard",
   "keywords": [
     "claude-code",
     "claude-code-plugin",

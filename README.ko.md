@@ -4,7 +4,7 @@
 
 <p align="center">Claude 데스크톱 앱용 Claude Code 대시보드이자 사용량 모니터.</p>
 
-[![License: MIT](https://img.shields.io/github/license/leohsiehtw/BetterClaudeDashboard)](LICENSE)
+[![License: MIT](https://img.shields.io/github/license/leohsiehtw/better-claude-dashboard)](LICENSE)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](#설치)
 [![Languages](https://img.shields.io/badge/languages-5-blue)](#언어)
 
@@ -41,13 +41,13 @@ BetterClaudeDashboard는 Claude Code 대시보드(dashboard)입니다. 이 Claud
 플러그인 이름: `better-claude-dashboard`.
 
 ```
-claude plugin marketplace add leohsiehtw/BetterClaudeDashboard
+claude plugin marketplace add leohsiehtw/better-claude-dashboard
 claude plugin install better-claude-dashboard@local-mods --scope user
 ```
 
 그다음 `/reload-plugins`를 실행합니다. 대상은 데스크톱 앱입니다.
 
-데스크톱 앱에서는 입력창 옆의 +를 누르고 Plugins를 선택한 뒤, Add marketplace에 `leohsiehtw/BetterClaudeDashboard`를 입력하고 Add plugin 합니다.
+데스크톱 앱에서는 입력창 옆의 +를 누르고 Plugins를 선택한 뒤, Add marketplace에 `leohsiehtw/better-claude-dashboard`를 입력하고 Add plugin 합니다.
 
 ## 훅이 하는 일
 
