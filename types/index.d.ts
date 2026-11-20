@@ -11,8 +11,12 @@ export type DashUsage = {
   categories?: { name: string; tokens: number; kind: string }[]
   /** the window the breakdown is measured against, in tokens */
   windowTokens?: number
-  /** how many memory files, MCP tools and custom agents the breakdown lists */
-  counts?: { memory?: number; mcp?: number; agents?: number }
+  /** how many memory files, MCP tools, custom agents and skills the breakdown lists */
+  counts?: { memory?: number; mcp?: number; agents?: number; skills?: number }
+  /** the session's repository folder name (or working folder when not in a repo) */
+  project?: string
+  /** the checked-out git branch, when git answered */
+  branch?: string
 }
 export type DashAgent = {
   id: string
@@ -58,6 +62,8 @@ export type DashActivity = {
   errors: number
   /** summed output tokens of each subagent's turns (turn.complete usage) */
   agentOut: Record<string, { out: number; model?: string }>
+  /** main loop turns' summed token counts (turn.complete usage), since this mod loaded */
+  tokens: { input: number; output: number; cacheRead: number; cacheWrite: number }
 }
 /** Card order and which cards are folded, kept across reloads. */
 export type DashLayout = { order: string[]; collapsed: string[]; lifting?: string }
@@ -72,6 +78,7 @@ declare module 'claude-code' {
       activity: Shaped<DashActivity>
       log: Shaped<DashLogEntry[]>
       layout: Shaped<DashLayout>
+      lang: string
     }
   }
 }

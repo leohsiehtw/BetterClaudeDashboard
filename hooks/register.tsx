@@ -6,6 +6,7 @@ import type {
   SessionContextUsage,
   SessionRateLimit,
   Timer,
+  TurnUsage,
 } from 'claude-code'
 
 import type {
@@ -17,6 +18,8 @@ import type {
   DashUsage,
   DashWindow,
 } from '../types'
+import { LOCALE_LABEL, detectLocale, isLocale, lead, nextLocale, strings, toLocale, word } from './i18n'
+import type { Strings } from './i18n'
 import { MASCOT_SVG, MOOD_MS, moodFor, spin } from './mascot'
 
 const PANE = 'better-claude-dashboard'
@@ -54,19 +57,20 @@ function emptyActivity(sessionStartedAt: number): DashActivity {
     edits: 0,
     errors: 0,
     agentOut: {},
+    tokens: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
   }
 }
 
 // Change a shape tag whenever that value's type in ../types changes.
 const usage = atom({ plugin: 'better-claude-dashboard', key: 'usage' } as const, EMPTY_USAGE, {
-  shape: 'usage-4',
+  shape: 'usage-5',
 })
 const agents = atom({ plugin: 'better-claude-dashboard', key: 'agents' } as const, [], {
   shape: 'agents-1',
 })
 const clockNow = atom({ plugin: 'better-claude-dashboard', key: 'now' } as const, 0)
 const activity = atom({ plugin: 'better-claude-dashboard', key: 'activity' } as const, emptyActivity(0), {
-  shape: 'activity-1',
+  shape: 'activity-2',
 })
 const layoutAtom = atom({ plugin: 'better-claude-dashboard', key: 'layout' } as const, { order: [], collapsed: [] } as DashLayout, {
   shape: 'layout-2',
@@ -74,6 +78,8 @@ const layoutAtom = atom({ plugin: 'better-claude-dashboard', key: 'layout' } as 
 const eventLog = atom({ plugin: 'better-claude-dashboard', key: 'log' } as const, [], {
   shape: 'log-1',
 })
+const langAtom = atom({ plugin: 'better-claude-dashboard', key: 'lang' } as const, '')
+const LANG_KEY = 'lang'
 
 // Timer bookkeeping and not-yet-flushed deltas only (never drawn from); a reload drops them.
 let ticker: Timer | undefined
@@ -96,6 +102,7 @@ export const register: Register = on => {
       () => update($, activity, cur => (cur.sessionStartedAt > 0 ? cur : emptyActivity(now))),
       undefined,
     )
+    await attempt($, () => initLang($), undefined)
     ticker = $.clock.every(TICK_MS, () => void tick($))
     void tick($)
     void openPane($)
@@ -169,7 +176,7 @@ export const register: Register = on => {
     await attempt(
       $,
       () =>
-        noteTurnEnd($, e.agentId, e.durationMs, e.reason, e.usage?.output_tokens, e.usage?.model),
+        noteTurnEnd($, e.agentId, e.durationMs, e.reason, e.usage),
       undefined,
     )
 
@@ -249,10 +256,9 @@ export const register: Register = on => {
       (ctx.tokens !== undefined && ctx.window > 0
         ? Math.round((ctx.tokens / ctx.window) * 100)
         : undefined)
-    const activeText =
-      live.length === 0
-        ? 'no subagents active'
-        : `${live.length} subagent${live.length === 1 ? '' : 's'} active`
+    const loc = toLocale(await read($, langAtom))
+    const S = strings(loc)
+    const activeText = live.length === 0 ? S.noSubagentsActive : S.subagentsActive(live.length)
 
     if (e.props.placement === 'widget') {
       const glance = snap.rateLimits
@@ -262,7 +268,7 @@ export const register: Register = on => {
 
       return (
         <Box flexDirection="column">
-          <Text>{glance.length === 0 ? 'Usage: waiting for a reading' : glance.join(' · ')}</Text>
+          <Text>{glance.length === 0 ? S.glanceWaiting : glance.join(' · ')}</Text>
           <Text dimColor>{activeText}</Text>
         </Box>
       )
@@ -275,11 +281,24 @@ export const register: Register = on => {
       act.sessionStartedAt > 0 && now >= act.sessionStartedAt
         ? fmtUptime(now - act.sessionStartedAt)
         : undefined
-    const modeLine = [snap.model, act.mode, act.effort === undefined ? undefined : `effort ${act.effort}`]
+    const modeLine = [snap.model, act.mode, act.effort === undefined ? undefined : S.effort(act.effort)]
       .filter(part => part !== undefined && part !== '')
       .join(' · ')
+    const repoLine = [snap.project, snap.branch === undefined ? undefined : `git ${snap.branch}`]
+      .filter(part => part !== undefined && part !== '')
+      .join(' · ')
+    const tk = act.tokens
+    const inTotal = tk.input + tk.cacheRead + tk.cacheWrite
+    const tokensText =
+      inTotal + tk.output > 0
+        ? S.tokensLine(
+            fmtCompact(inTotal),
+            fmtCompact(tk.output),
+            inTotal > 0 ? Math.round((tk.cacheRead / inTotal) * 100) : undefined,
+          )
+        : undefined
     const statLine = [
-      snap.turns === undefined ? undefined : `${snap.turns} turns`,
+      snap.turns === undefined ? undefined : S.turns(snap.turns),
       snap.costUsd === undefined ? undefined : `$${snap.costUsd.toFixed(2)}`,
     ]
       .filter(part => part !== undefined)
@@ -288,10 +307,10 @@ export const register: Register = on => {
     const turnRunning = turn.startedAt !== undefined && turn.endedAt === undefined
     const turnHead =
       turn.startedAt === undefined
-        ? 'no turn yet'
+        ? S.noTurnYet
         : turnRunning
-          ? `${spin(now)} running ${fmtElapsed(Math.max(0, now - turn.startedAt))}`
-          : 'idle'
+          ? `${spin(now)} ${S.running(fmtElapsed(Math.max(0, now - turn.startedAt)))}`
+          : S.idle
     const c = act.checks
     const topTools = Object.entries(act.tools)
       .sort((a, b) => b[1] - a[1])
@@ -328,7 +347,7 @@ export const register: Register = on => {
     const contextBar = (
       <Box flexDirection="column">
         <Text bold color={levelColor(totalPct)} wrap="wrap">
-          {`${fmtCompact(usedTokens)} / ${fmtCompact(win)} · ${totalPct}% used`}
+          {S.usedLine(fmtCompact(usedTokens), fmtCompact(win), totalPct)}
         </Text>
         {Array.from({ length: ROWS }, (_, r) => {
           const runs: { color: string; glyph: string; n: number }[] = []
@@ -370,7 +389,7 @@ export const register: Register = on => {
         ? (() => {
             const { Svg } = $.ui.resolve(e)
 
-            return <Svg source={artSource} alt="Mascot" width={216} height={148} />
+            return <Svg source={artSource} alt={S.mascotAlt} width={216} height={148} />
           })()
         : null
 
@@ -401,16 +420,18 @@ export const register: Register = on => {
     const cards: Record<string, JSX.Element | null> = {
       session: card(
         'session',
-        'SESSION',
+        S.session,
         ORANGE,
         <Text dimColor wrap="wrap">
-          {uptime !== undefined ? `up ${uptime}` : snap.measuredAt === 0 ? 'waiting' : 'live'}
+          {uptime !== undefined ? S.up(uptime) : snap.measuredAt === 0 ? S.waiting : S.live}
         </Text>,
         <Box flexDirection="column">
-          <Text wrap="wrap">{modeLine !== '' ? modeLine : 'model · waiting for a reading'}</Text>
+          <Text wrap="wrap">{modeLine !== '' ? modeLine : S.modelWaiting}</Text>
+          {repoLine !== '' && <Text dimColor wrap="wrap">{repoLine}</Text>}
           {statLine !== '' && <Text dimColor wrap="wrap">{statLine}</Text>}
+          {tokensText !== undefined && <Text dimColor wrap="wrap">{tokensText}</Text>}
           {ctx.tokens === undefined ? (
-            <Text dimColor>ctx · no reading yet (fills after the next response)</Text>
+            <Text dimColor>{S.ctxNoReading}</Text>
           ) : (
             <Text wrap="wrap">
               <Text dimColor>ctx </Text>
@@ -420,15 +441,15 @@ export const register: Register = on => {
             </Text>
           )}
           {ctx.tokens !== undefined && (
-            <Text dimColor wrap="wrap">{`    ${fmtCompact(ctx.tokens)} / ${fmtCompact(ctx.window)} tokens`}</Text>
+            <Text dimColor wrap="wrap">{`    ${S.tokensOf(fmtCompact(ctx.tokens), fmtCompact(ctx.window))}`}</Text>
           )}
           {snap.autoCompact !== undefined && (
             <Text dimColor wrap="wrap">
-              {autoCompactText(snap.autoCompact, ctx.window)}
+              {autoCompactText(S, snap.autoCompact, ctx.window)}
             </Text>
           )}
           {snap.measuredAt !== 0 && snap.rateLimits.length === 0 && (
-            <Text dimColor>plan limits · no reading yet (subscription only)</Text>
+            <Text dimColor>{S.planNoReading}</Text>
           )}
           {snap.rateLimits.map(w => (
             <Box key={w.kind} flexDirection="column">
@@ -438,8 +459,8 @@ export const register: Register = on => {
                 <Text color={TRACK}>{barRest(w.percentUsed)}</Text>
                 <Text bold>{` ${w.percentUsed}%`}</Text>
               </Text>
-              {resetText(w.resetsAt, now) !== '' && (
-                <Text dimColor wrap="wrap">{`    ${resetText(w.resetsAt, now)}`}</Text>
+              {resetText(S, w.resetsAt, now) !== '' && (
+                <Text dimColor wrap="wrap">{`    ${resetText(S, w.resetsAt, now)}`}</Text>
               )}
             </Box>
           ))}
@@ -450,7 +471,7 @@ export const register: Register = on => {
           ? null
           : card(
               'context',
-              'CONTEXT',
+              S.context,
               CYAN,
               null,
               <Box flexDirection="column">
@@ -459,9 +480,10 @@ export const register: Register = on => {
                 {snap.counts !== undefined && Object.keys(snap.counts).length > 0 && (
                   <Text dimColor wrap="wrap">
                     {[
-                      snap.counts.mcp === undefined ? '' : `MCP tools ${snap.counts.mcp}`,
-                      snap.counts.memory === undefined ? '' : `memory files ${snap.counts.memory}`,
-                      snap.counts.agents === undefined ? '' : `agents ${snap.counts.agents}`,
+                      snap.counts.mcp === undefined ? '' : S.mcpTools(snap.counts.mcp),
+                      snap.counts.memory === undefined ? '' : S.memoryFiles(snap.counts.memory),
+                      snap.counts.agents === undefined ? '' : S.agentsCount(snap.counts.agents),
+                      snap.counts.skills === undefined ? '' : S.skillsCount(snap.counts.skills),
                     ]
                       .filter(part => part !== '')
                       .join(' · ')}
@@ -471,64 +493,64 @@ export const register: Register = on => {
             ),
       turn: card(
         'turn',
-        'TURN',
+        S.turn,
         TEAL,
         <Text color={turnRunning ? AMBER : TRACK} wrap="wrap">{turnHead}</Text>,
         <Box flexDirection="column">
           <Text wrap="wrap">
-            <Text dimColor>calls </Text>
+            <Text dimColor>{`${S.calls} `}</Text>
             <Text bold>{String(turn.calls)}</Text>
-            <Text dimColor> · edits </Text>
+            <Text dimColor>{` · ${S.edits} `}</Text>
             <Text bold>{String(turn.edits)}</Text>
-            <Text dimColor> · errors </Text>
+            <Text dimColor>{` · ${S.errors} `}</Text>
             <Text bold color={turn.errors > 0 ? RED : GREEN}>
               {String(turn.errors)}
             </Text>
           </Text>
           <Text dimColor wrap="wrap">
-            {`last turn ${turn.lastMs === undefined ? '—' : fmtElapsed(turn.lastMs)}`}
+            {S.lastTurn(turn.lastMs === undefined ? '—' : fmtElapsed(turn.lastMs))}
           </Text>
           <Text dimColor wrap="wrap">
-            {`session edits ${act.edits} · errors ${act.errors}`}
+            {S.sessionTotals(act.edits, act.errors)}
           </Text>
         </Box>,
       ),
       permissions: card(
         'permissions',
-        'PERMISSIONS',
+        S.permissions,
         AMBER,
         null,
         <Box flexDirection="column">
           <Text wrap="wrap">
-            <Text color={GREEN}>{`✓ ${c.allow} allow`}</Text>
+            <Text color={GREEN}>{S.allow(c.allow)}</Text>
             <Text dimColor> · </Text>
-            <Text color={AMBER}>{`? ${Math.max(0, c.ask - c.auto)} ask`}</Text>
+            <Text color={AMBER}>{S.ask(Math.max(0, c.ask - c.auto))}</Text>
             <Text dimColor> · </Text>
-            <Text color={RED}>{`✗ ${c.deny + c.autoDenied} deny`}</Text>
+            <Text color={RED}>{S.deny(c.deny + c.autoDenied)}</Text>
           </Text>
           <Text dimColor wrap="wrap">
-            {`classifier ${c.auto} · prompted ${c.prompted} · pending ${c.open}`}
+            {S.checksLine(c.auto, c.prompted, c.open)}
           </Text>
           <Text wrap="wrap">
-            <Text dimColor>file </Text>
+            <Text dimColor>{`${S.file} `}</Text>
             <Text bold>{String(act.groups.file)}</Text>
-            <Text dimColor> · shell </Text>
+            <Text dimColor>{` · ${S.shell} `}</Text>
             <Text bold>{String(act.groups.shell)}</Text>
-            <Text dimColor> · other </Text>
+            <Text dimColor>{` · ${S.other} `}</Text>
             <Text bold>{String(act.groups.other)}</Text>
           </Text>
           <Text dimColor wrap="wrap">
-            {topTools !== '' ? topTools : 'no tool calls yet'}
+            {topTools !== '' ? topTools : S.noToolCalls}
           </Text>
         </Box>,
       ),
       agents: card(
         'agents',
-        `AGENTS · ${live.length} running · ${rows.length} total`,
+        S.agents(live.length, rows.length),
         INDIGO,
         null,
         <Box flexDirection="column">
-          {rows.length === 0 && <Text dimColor>No subagents yet.</Text>}
+          {rows.length === 0 && <Text dimColor>{S.noSubagents}</Text>}
           <Box flexDirection="column" gap="sm">
             {rows.map(row => {
               const used = act.agentOut[row.id]
@@ -553,11 +575,11 @@ export const register: Register = on => {
                   </Text>
                   <Text color={isLive ? AMBER : isBad ? RED : GREEN} wrap="wrap">
                     {`${isLive ? `${spin(now)} ` : isBad ? '✗ ' : '✓ '}${fmtElapsed((row.endedAt ?? now) - row.startedAt)}`}
-                    <Text dimColor>{` · ${row.status}`}</Text>
+                    <Text dimColor>{` · ${word(S, row.status)}`}</Text>
                   </Text>
                   {used !== undefined && (
                     <Text dimColor wrap="wrap">
-                      {`out ${fmtCompact(used.out)} tok${used.model === undefined ? '' : ` · ${used.model}`}`}
+                      {S.outTok(fmtCompact(used.out), used.model)}
                     </Text>
                   )}
                 </Box>
@@ -568,16 +590,16 @@ export const register: Register = on => {
       ),
       log: card(
         'log',
-        'SESSION LOG',
+        S.log,
         BLUE,
         null,
         <Box flexDirection="column">
-          {shownLog.length === 0 && <Text dimColor>No events yet.</Text>}
+          {shownLog.length === 0 && <Text dimColor>{S.noEvents}</Text>}
           {shownLog.map(entry => (
             <Text key={`${entry.at}-${entry.name}-${entry.text}`} wrap="wrap">
               <Text dimColor>{`${fmtClock(entry.at)} `}</Text>
-              <Text color={toneColor(entry.tone)}>{entry.name}</Text>
-              <Text dimColor>{entry.text === '' ? '' : ` ${entry.text}`}</Text>
+              <Text color={toneColor(entry.tone)}>{word(S, entry.name)}</Text>
+              <Text dimColor>{entry.text === '' ? '' : ` ${lead(S, entry.text)}`}</Text>
             </Text>
           ))}
         </Box>,
@@ -586,13 +608,20 @@ export const register: Register = on => {
 
     return (
       <Box flexDirection="column" gap="sm">
+        <Box justifyContent="flex-end">
+          <Button
+            key="lang"
+            label={LOCALE_LABEL[loc]}
+            onPress={() => void attempt($, () => cycleLang($), undefined)}
+          />
+        </Box>
         {art !== null && (
           <Box flexDirection="column" alignItems="center">
             {art}
           </Box>
         )}
         {layout.lifting !== undefined && (
-          <Text dimColor wrap="wrap">{`⠿ moving ${layout.lifting}: press another card's ⠿ to drop it there, the same one to cancel`}</Text>
+          <Text dimColor wrap="wrap">{S.moving(layout.lifting)}</Text>
         )}
         {order.map(id => cards[id] ?? null)}
       </Box>
@@ -604,12 +633,13 @@ export const register: Register = on => {
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e)
     const { Box, Button } = $.ui.resolve(e)
+    const S = strings(await read($, langAtom))
 
     return (
       <Box>
         <Button
           key="open-usage"
-          label="Usage ▸"
+          label={S.openButton}
           onPress={() => void attempt($, () => $.ui.open({ id: PANE, title: TITLE }), undefined)}
         />
       </Box>
@@ -732,12 +762,11 @@ async function noteTurnEnd(
   agentId: string | undefined,
   durationMs: number,
   reason: string,
-  outTokens: number | undefined,
-  model: string | undefined,
+  usage: TurnUsage | undefined,
 ): Promise<void> {
   const at = await $.clock.now()
   if (agentId !== undefined) {
-    if (outTokens === undefined) return
+    if (usage === undefined) return
     queue($, a => {
       const prev = a.agentOut[agentId]
       if (prev === undefined && Object.keys(a.agentOut).length >= AGENT_OUT_CAP) {
@@ -745,8 +774,8 @@ async function noteTurnEnd(
         if (oldest !== undefined) delete a.agentOut[oldest]
       }
       a.agentOut[agentId] = {
-        out: (prev?.out ?? 0) + outTokens,
-        ...(model === undefined ? {} : { model: shortModel(model) }),
+        out: (prev?.out ?? 0) + usage.output_tokens,
+        model: shortModel(usage.model),
       }
     })
 
@@ -757,6 +786,12 @@ async function noteTurnEnd(
     a => {
       a.turn.endedAt = at
       a.turn.lastMs = durationMs
+      if (usage !== undefined) {
+        a.tokens.input += usage.input_tokens
+        a.tokens.output += usage.output_tokens
+        a.tokens.cacheRead += usage.cache_read_input_tokens
+        a.tokens.cacheWrite += usage.cache_creation_input_tokens
+      }
     },
     {
       at,
@@ -928,9 +963,16 @@ async function refreshUsage($: EngineInterface): Promise<void> {
   let categories: DashUsage['categories'] = prev.categories
   let windowTokens: number | undefined = prev.windowTokens
   let counts: DashUsage['counts'] = prev.counts
+  let project = prev.project
+  let branch = prev.branch
   const wait = autoCompact === undefined ? BREAKDOWN_RETRY_MS : BREAKDOWN_EVERY_MS
   if (plain.context.window !== prev.context.window || now - breakdownAt >= wait) {
     breakdownAt = now
+    const repo = await attempt($, () => readRepo($), undefined)
+    if (repo !== undefined) {
+      project = repo.project
+      branch = repo.branch
+    }
     const breakdown = (await $.session.usage({ breakdown: 'summary' })).context.breakdown
     if (breakdown !== undefined) {
       autoCompact = {
@@ -948,6 +990,7 @@ async function refreshUsage($: EngineInterface): Promise<void> {
         ...(breakdown.memoryFiles.length > 0 ? { memory: breakdown.memoryFiles.length } : {}),
         ...(breakdown.mcpTools.length > 0 ? { mcp: breakdown.mcpTools.length } : {}),
         ...(breakdown.agents.length > 0 ? { agents: breakdown.agents.length } : {}),
+        ...(breakdown.skills !== undefined && breakdown.skills.totalSkills > 0 ? { skills: breakdown.skills.totalSkills } : {}),
       }
     }
   }
@@ -963,9 +1006,43 @@ async function refreshUsage($: EngineInterface): Promise<void> {
     ...(categories === undefined ? {} : { categories }),
     ...(windowTokens === undefined ? {} : { windowTokens }),
     ...(counts === undefined ? {} : { counts }),
+    ...(project === undefined ? {} : { project }),
+    ...(branch === undefined ? {} : { branch }),
   }
   if (prev.measuredAt !== 0 && sameReading(prev, fresh)) return
   await update($, usage, () => fresh)
+}
+
+async function readRepo($: EngineInterface): Promise<{ project?: string; branch?: string }> {
+  const repo = await $.session.repo()
+  const project = baseName(repo?.root ?? (await $.session.root()))
+  if (repo === null) return { project }
+  const run = await $.process.run(['git', 'branch', '--show-current'], { timeoutMs: 3_000 })
+  const branch = run.exitCode === 0 ? run.stdout.trim() : ''
+
+  return branch === '' ? { project } : { project, branch: clip(branch, 32) }
+}
+
+async function initLang($: EngineInterface): Promise<void> {
+  if (isLocale(await read($, langAtom))) return
+  const stored = await attempt($, () => $.store.get(LANG_KEY), undefined)
+  const setting = await attempt($, () => $.settings.read({ key: 'language' }), undefined)
+  const lcAll = await attempt($, () => $.env.get('LC_ALL'), undefined)
+  const lcMessages = await attempt($, () => $.env.get('LC_MESSAGES'), undefined)
+  const lang = await attempt($, () => $.env.get('LANG'), undefined)
+  const chosen =
+    (isLocale(stored) ? stored : undefined) ??
+    detectLocale(setting) ??
+    detectLocale(lcAll) ??
+    detectLocale(lcMessages) ??
+    detectLocale(lang) ??
+    'en'
+  await update($, langAtom, cur => (isLocale(cur) ? cur : chosen))
+}
+
+async function cycleLang($: EngineInterface): Promise<void> {
+  const code = await update($, langAtom, cur => nextLocale(cur))
+  await $.store.set(LANG_KEY, code)
 }
 
 function sameReading(a: DashUsage, b: DashUsage): boolean {
@@ -1051,20 +1128,20 @@ function toneColor(tone: DashLogEntry['tone']): string {
   return tone === 'ok' ? GREEN : tone === 'warn' ? AMBER : tone === 'err' ? RED : INDIGO
 }
 
-function autoCompactText(ac: DashAutoCompact, window: number): string {
-  if (!ac.isEnabled) return 'auto-compact: off'
-  if (ac.thresholdTokens === undefined) return 'auto-compact: on'
+function autoCompactText(S: Strings, ac: DashAutoCompact, window: number): string {
+  if (!ac.isEnabled) return S.autoCompactOff
+  if (ac.thresholdTokens === undefined) return S.autoCompactOn
   const share = window > 0 ? ` (${Math.round((ac.thresholdTokens / window) * 100)}%)` : ''
 
-  return `auto-compact at ${fmtCompact(ac.thresholdTokens)}${share}`
+  return S.autoCompactAt(fmtCompact(ac.thresholdTokens), share)
 }
 
-function resetText(resetsAt: string | undefined, now: number): string {
+function resetText(S: Strings, resetsAt: string | undefined, now: number): string {
   if (resetsAt === undefined || now === 0) return ''
   const at = Date.parse(resetsAt)
   if (Number.isNaN(at)) return ''
 
-  return at <= now ? 'resetting' : `resets in ${fmtCountdown(at - now)}`
+  return at <= now ? S.resetting : S.resetsIn(fmtCountdown(at - now))
 }
 
 function pad(n: number): string {

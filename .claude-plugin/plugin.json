@@ -1,10 +1,22 @@
 {
   "name": "better-claude-dashboard",
-  "version": "0.1.0",
-  "description": "Live usage pane for the Claude desktop app: 5-hour and weekly plan limits with reset times, this session's context window and auto-compact threshold, and subagents with status and elapsed time.",
+  "version": "0.2.0",
+  "description": "Claude Code dashboard for the desktop app: a live usage monitor pane with 5-hour and weekly plan limits, context window, cost, tokens and cache hit rate, git branch, permissions and subagents. English, 繁體中文, 简体中文, 日本語, 한국어.",
   "author": {
     "name": "leohsiehtw"
   },
   "license": "MIT",
-  "icon": ".claude-plugin/icon.png"
+  "icon": ".claude-plugin/icon.png",
+  "homepage": "https://github.com/leohsiehtw/BetterClaudeDashboard",
+  "repository": "https://github.com/leohsiehtw/BetterClaudeDashboard",
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "claude-dashboard",
+    "usage-monitor",
+    "token-usage",
+    "context-window",
+    "rate-limits",
+    "i18n"
+  ]
 }

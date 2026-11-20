@@ -1,43 +1,62 @@
-<p align="center"><img src="docs/icon.png" alt="BetterClaudeDashboard icon" width="96"></p>
+<p align="center"><img src="docs/icon.png" alt="BetterClaudeDashboard，Claude Code 儀表板外掛圖示" width="96"></p>
 
 <h1 align="center">BetterClaudeDashboard</h1>
 
-[English](README.md) · 繁體中文
+<p align="center">給 Claude 桌面版用的 Claude Code 儀表板與用量監視器。</p>
 
-Claude Code 桌面版的資源監視器。放在側邊面板，不離開 app 就能即時看用量、context、權限和 subagent。只觀察事件：不呼叫模型、不耗 token，也不阻擋或改寫工具呼叫。
+[![License: MIT](https://img.shields.io/github/license/leohsiehtw/BetterClaudeDashboard)](LICENSE)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](#安裝)
+[![Languages](https://img.shields.io/badge/languages-5-blue)](#語言)
 
-### 吉祥物
+[English](README.md) · 繁體中文 · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md)
 
-<table><tr><td align="center"><img src="docs/moods/idle.gif" width="150"><br><sub>閒置：睡覺、東張西望、眨眼</sub></td><td align="center"><img src="docs/moods/laptop.gif" width="150"><br><sub>拿出筆電、轉身打字</sub></td><td align="center"><img src="docs/moods/read.gif" width="150"><br><sub>看書</sub></td><td align="center"><img src="docs/moods/search.gif" width="150"><br><sub>搜尋</sub></td></tr><tr><td align="center"><img src="docs/moods/coffee.gif" width="150"><br><sub>喝咖啡休息</sub></td><td align="center"><img src="docs/moods/walk.gif" width="150"><br><sub>邊走邊想</sub></td><td align="center"><img src="docs/moods/bulb.gif" width="150"><br><sub>靈光一閃</sub></td><td align="center"><img src="docs/moods/hop.gif" width="150"><br><sub>跳躍</sub></td></tr></table>
+BetterClaudeDashboard 是一個 Claude Code 儀表板（dashboard）：這個 Claude Code plugin 和用量監視器（usage monitor）放在桌面版的側邊面板，不離開 app 就能即時看 token 用量、context window、5 小時與每週限額、權限和 subagent。只觀察事件：不呼叫模型、不耗 token，也不阻擋或改寫工具呼叫。
 
-### 功能
+## 吉祥物
+
+<table><tr><td align="center"><img src="docs/moods/idle.gif" alt="Claude Code 儀表板吉祥物：閒置" width="150"><br><sub>閒置：睡覺、東張西望、眨眼</sub></td><td align="center"><img src="docs/moods/laptop.gif" alt="Claude Code 儀表板吉祥物：用筆電打字" width="150"><br><sub>拿出筆電、轉身打字</sub></td><td align="center"><img src="docs/moods/read.gif" alt="Claude Code 儀表板吉祥物：看書" width="150"><br><sub>看書</sub></td><td align="center"><img src="docs/moods/search.gif" alt="Claude Code 儀表板吉祥物：搜尋" width="150"><br><sub>搜尋</sub></td></tr><tr><td align="center"><img src="docs/moods/coffee.gif" alt="Claude Code 儀表板吉祥物：喝咖啡休息" width="150"><br><sub>喝咖啡休息</sub></td><td align="center"><img src="docs/moods/walk.gif" alt="Claude Code 儀表板吉祥物：邊走邊想" width="150"><br><sub>邊走邊想</sub></td><td align="center"><img src="docs/moods/bulb.gif" alt="Claude Code 儀表板吉祥物：靈光一閃" width="150"><br><sub>靈光一閃</sub></td><td align="center"><img src="docs/moods/hop.gif" alt="Claude Code 儀表板吉祥物：跳躍" width="150"><br><sub>跳躍</sub></td></tr></table>
+
+## 功能
 
 - **方案用量**：5 小時與 7 天用量條，附重置倒數。
 - **Session**：模型、權限模式、effort、回合數、費用、運行時間、context 條、自動壓縮門檻、佔用最多的 context 類別。
-- **背景資訊（context 分類）**：訊息、系統工具、MCP 工具、系統提示、Skills、記憶檔案、自訂代理、自動壓縮緩衝、可用空間與延遲載入工具，各顯示 token 數與佔視窗比例。
+- **Git**：專案資料夾名稱與目前的 git branch。
+- **Tokens**：主執行緒的輸入與輸出 token，以及 prompt cache 命中率。
+- **背景資訊（context 分類）**：訊息、系統工具、MCP 工具、系統提示、Skills、記憶檔案、自訂代理、自動壓縮緩衝、可用空間與延遲載入工具，各顯示 token 數與佔視窗比例，另列出 MCP 工具、記憶檔案、自訂代理和 Skills 的數量。
 - **Turn**：本回合即時計時、工具呼叫數、編輯數、錯誤數、上一回合耗時、整個 session 累計。
 - **Permissions**：允許 / 詢問 / 拒絕次數、檔案 / shell / 其他分類、前幾名工具。
 - **Subagents**：每個一張卡，顯示名稱、說明、狀態、經過時間、輸出 token 與模型。
 - **Session log**：最近 12 筆事件（工具、權限、回合、subagent）。
+- **多語言**：English、繁體中文、简体中文、日本語、한국어，用面板裡的按鈕切換。
 - **會動的 Claude 吉祥物**：閒置時睡覺、東張西望，Claude 工作時輪流表演用筆電、看書、搜尋、喝咖啡、踱步、靈光一閃和跳躍。桌面版用 SVG 繪製。這是非官方的同人繪製，不是 Anthropic 的素材。
 - **可重開**：關掉面板後，用輸入框上方的 `Usage ▸` 按鈕重新打開。
 - 淺色與深色模式都可讀，窄面板文字會自動換行。
 
-### 安裝
+## 語言
+
+面板提供 English、繁體中文、简体中文、日本語、한국어。語言依這個順序決定：上次的選擇、Claude Code 的 `language` 設定、`LC_ALL` / `LC_MESSAGES` / `LANG` 環境變數，最後是 English。面板上方的按鈕依 EN → 繁中 → 简中 → 日本語 → 한국어 循環切換，選擇會跨 session 保留。
+
+## 安裝
 
 外掛名稱：`better-claude-dashboard`。
 
 ```
-claude plugin marketplace add <路徑或 repo>
+claude plugin marketplace add leohsiehtw/BetterClaudeDashboard
 claude plugin install better-claude-dashboard@local-mods --scope user
 ```
 
 之後執行 `/reload-plugins`。以桌面版為主。
 
-### Hook 做了什麼
+在桌面版：點輸入框旁的 +，選 Plugins，Add marketplace `leohsiehtw/BetterClaudeDashboard`，再 Add plugin。
 
-所有 hook 都只觀察，並原封不動放行事件：`tool.check` 記錄允許 / 詢問 / 拒絕的判定（先取得判定結果再原樣回傳），`tool.call` 統計呼叫與錯誤，`turn.start` / `turn.complete` 計時回合並讀取 subagent 輸出 token，`classic.*` 事件記錄權限模式、effort 與權限彈窗，`session.*` 啟動更新計時器，`ui.render` 繪製面板和 `Usage ▸` 按鈕。
+## Hook 做了什麼
 
-### 限制
+所有 hook 都只觀察，並原封不動放行事件：`tool.check` 記錄允許 / 詢問 / 拒絕的判定（先取得判定結果再原樣回傳），`tool.call` 統計呼叫與錯誤，`turn.start` / `turn.complete` 計時回合、讀取 subagent 輸出 token，並加總主執行緒的 token，`classic.*` 事件記錄權限模式、effort 與權限彈窗，`session.*` 啟動更新計時器（`session.start` 也負責選擇語言），`ui.render` 繪製面板和 `Usage ▸` 按鈕。約每分鐘在 session 資料夾執行一次 `git branch --show-current` 來顯示 branch。
 
-API 拿不到所以不顯示：每個 subagent 的 context 大小、分類器的真正判定、請求數（以回合數代替）。「等待」是判為詢問但尚未結束的呼叫數，包含工具本身執行的時間。
+## 限制
+
+API 拿不到所以不顯示：每個 subagent 的 context 大小、分類器的真正判定、請求數（以回合數代替），以及依模型分開的週限額。「等待」是判為詢問但尚未結束的呼叫數，包含工具本身執行的時間。Token 總計只算 mod 載入之後的主執行緒回合。git branch 需要 PATH 上有 `git`。
+
+## 致謝
+
+精簡用量顯示的點子來自 status-line 外掛 [uppinote20/claude-dashboard](https://github.com/uppinote20/claude-dashboard)。
